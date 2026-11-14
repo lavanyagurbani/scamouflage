@@ -3,8 +3,6 @@
 **Scamouflage: An Automated Job Fraud and Phishing Data Engineering Pipeline**  
 *Unmasking Scams Through Data*
 
-College Data Engineering microproject for two students. Submission: 16–17 November 2026.
-
 ## Current scope
 
 The local microproject is complete. Start with [TECHNICAL_HANDOFF.md](TECHNICAL_HANDOFF.md)
