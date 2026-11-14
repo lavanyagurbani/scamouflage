@@ -1,0 +1,39 @@
+version: 2
+sources:
+  - name: scamouflage_raw
+    database: scamouflage
+    schema: scamouflage_raw
+    description: "Existing Phase 3 batch-loaded snapshots; dbt reads but never materializes here."
+    tables:
+      - name: raw_job_postings
+        description: "17,880 postings, 18 nullable STRING fields; fraudulent is a source label."
+        columns:
+          - {name: job_id, data_type: STRING}
+          - {name: title, data_type: STRING}
+          - {name: location, data_type: STRING}
+          - {name: department, data_type: STRING}
+          - {name: salary_range, data_type: STRING}
+          - {name: company_profile, data_type: STRING}
+          - {name: description, data_type: STRING}
+          - {name: requirements, data_type: STRING}
+          - {name: benefits, data_type: STRING}
+          - {name: telecommuting, data_type: STRING}
+          - {name: has_company_logo, data_type: STRING}
+          - {name: has_questions, data_type: STRING}
+          - {name: employment_type, data_type: STRING}
+          - {name: required_experience, data_type: STRING}
+          - {name: required_education, data_type: STRING}
+          - {name: industry, data_type: STRING}
+          - {name: function, data_type: STRING}
+          - {name: fraudulent, data_type: STRING}
+      - name: raw_phishing_reports
+        description: "45,680 reports, 8 nullable STRING fields; URLs are inert text."
+        columns:
+          - {name: phish_id, data_type: STRING}
+          - {name: url, data_type: STRING}
+          - {name: phish_detail_url, data_type: STRING}
+          - {name: submission_time, data_type: STRING}
+          - {name: verified, data_type: STRING}
+          - {name: verification_time, data_type: STRING}
+          - {name: online, data_type: STRING}
+          - {name: target, data_type: STRING}

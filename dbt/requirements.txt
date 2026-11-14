@@ -1,0 +1,6 @@
+# Match the verified host dbt environment and Airflow's isolated dbt environment.
+# Installation is a manual setup action, not part of demo startup or audit.
+dbt-core==1.7.20
+dbt-bigquery==1.7.9
+protobuf>=4.25.3,<5
+numpy>=1.26,<2

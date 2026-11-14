@@ -1,0 +1,170 @@
+{
+  "inspected_at_utc": "2026-11-14T17:34:59.206472+00:00",
+  "scope": "Public tag/index/manifest/config JSON only; no layer requests, pulls or execution.",
+  "candidates": [
+    {
+      "repository": "airbyte/source-file",
+      "tag": "0.6.2",
+      "hub_url": "https://hub.docker.com/v2/repositories/airbyte/source-file/tags/0.6.2",
+      "last_updated": "2026-11-13T16:40:46.029228Z",
+      "index_digest": "sha256:2d5916361d199a0fd58655fa2d61455db05b41f1b419b3cc00b27cf5e64c15cc",
+      "index_bytes": 1609,
+      "platforms": [
+        {
+          "os": "linux",
+          "architecture": "amd64",
+          "manifest_digest": "sha256:61a0a57dcc3a7e2cef473a094e765afe8ed606788042279e04297a0f71fb054a",
+          "manifest_bytes": 3340,
+          "layer_count": 16,
+          "compressed_layer_bytes": 262595608,
+          "config_bytes": 10485,
+          "config_architecture": "amd64",
+          "entrypoint": [
+            "/entrypoint.sh"
+          ],
+          "version_environment": [],
+          "revision": null
+        },
+        {
+          "os": "linux",
+          "architecture": "arm64",
+          "manifest_digest": "sha256:5d464cb1ac1de835d73802aec3ee8de7c2a47ed344e3395dfb58cad69e328125",
+          "manifest_bytes": 3340,
+          "layer_count": 16,
+          "compressed_layer_bytes": 252912574,
+          "config_bytes": 10486,
+          "config_architecture": "arm64",
+          "entrypoint": [
+            "/entrypoint.sh"
+          ],
+          "version_environment": [],
+          "revision": null
+        }
+      ]
+    },
+    {
+      "repository": "airbyte/source-file",
+      "tag": "0.6.0",
+      "hub_url": "https://hub.docker.com/v2/repositories/airbyte/source-file/tags/0.6.0",
+      "last_updated": "2025-11-03T17:04:22.839165Z",
+      "index_digest": "sha256:25d9684b61b6cbb518cd93517d5cd907dcd8751fb12b9e9ada6947045db89589",
+      "index_bytes": 1609,
+      "platforms": [
+        {
+          "os": "linux",
+          "architecture": "amd64",
+          "manifest_digest": "sha256:546e69880914df1e90eb8452170aff89762dcdde3284f409cd29100c0c672784",
+          "manifest_bytes": 3340,
+          "layer_count": 16,
+          "compressed_layer_bytes": 262604428,
+          "config_bytes": 10483,
+          "config_architecture": "amd64",
+          "entrypoint": [
+            "/entrypoint.sh"
+          ],
+          "version_environment": [],
+          "revision": null
+        },
+        {
+          "os": "linux",
+          "architecture": "arm64",
+          "manifest_digest": "sha256:e4c0e8cd821011a54e4321621d7f17f1bda32bf78190afa4f87257e617f765a2",
+          "manifest_bytes": 3340,
+          "layer_count": 16,
+          "compressed_layer_bytes": 252931716,
+          "config_bytes": 10486,
+          "config_architecture": "arm64",
+          "entrypoint": [
+            "/entrypoint.sh"
+          ],
+          "version_environment": [],
+          "revision": null
+        }
+      ]
+    },
+    {
+      "repository": "airbyte/destination-sqlite",
+      "tag": "0.2.9",
+      "hub_url": "https://hub.docker.com/v2/repositories/airbyte/destination-sqlite/tags/0.2.9",
+      "last_updated": "2025-05-10T16:28:22.287584Z",
+      "index_digest": "sha256:48fd432a29060d91c5b1a235304de7b6039e670e282e48da742674f1dc3b4f3f",
+      "index_bytes": 647,
+      "platforms": [
+        {
+          "os": "linux",
+          "architecture": "amd64",
+          "manifest_digest": "sha256:47265c0feb98b46e4484120b0b957ef02d3b8274c45d6ec1c41b6671424b5410",
+          "manifest_bytes": 4283,
+          "layer_count": 21,
+          "compressed_layer_bytes": 240411410,
+          "config_bytes": 5971,
+          "config_architecture": "amd64",
+          "entrypoint": [
+            "python",
+            "/airbyte/integration_code/main.py"
+          ],
+          "version_environment": [],
+          "revision": null
+        },
+        {
+          "os": "linux",
+          "architecture": "arm64",
+          "manifest_digest": "sha256:bceeb5c94c8f7fbc8620ca1151976831574bff2a2b353196de0fab812fb62f5f",
+          "manifest_bytes": 4283,
+          "layer_count": 21,
+          "compressed_layer_bytes": 233910708,
+          "config_bytes": 6645,
+          "config_architecture": "arm64",
+          "entrypoint": [
+            "python",
+            "/airbyte/integration_code/main.py"
+          ],
+          "version_environment": [],
+          "revision": null
+        }
+      ]
+    },
+    {
+      "repository": "airbyte/destination-sqlite",
+      "tag": "0.2.6",
+      "hub_url": "https://hub.docker.com/v2/repositories/airbyte/destination-sqlite/tags/0.2.6",
+      "last_updated": "2025-04-19T18:27:13.534591Z",
+      "index_digest": "sha256:5eee23ec44d4850e5a9a352b1ff9e46d3c7624147427b64ffcd748a6ae68d7a5",
+      "index_bytes": 647,
+      "platforms": [
+        {
+          "os": "linux",
+          "architecture": "amd64",
+          "manifest_digest": "sha256:09eed986ce1220a864fd80596b9dca2ce21e1c689b32380cdeb0c188221d5181",
+          "manifest_bytes": 4283,
+          "layer_count": 21,
+          "compressed_layer_bytes": 231849215,
+          "config_bytes": 5969,
+          "config_architecture": "amd64",
+          "entrypoint": [
+            "python",
+            "/airbyte/integration_code/main.py"
+          ],
+          "version_environment": [],
+          "revision": null
+        },
+        {
+          "os": "linux",
+          "architecture": "arm64",
+          "manifest_digest": "sha256:ad3581d65e5a8e9c554230fe22390937eb14ae338414aad03243cdb20cfb0378",
+          "manifest_bytes": 4283,
+          "layer_count": 21,
+          "compressed_layer_bytes": 225535821,
+          "config_bytes": 6643,
+          "config_architecture": "arm64",
+          "entrypoint": [
+            "python",
+            "/airbyte/integration_code/main.py"
+          ],
+          "version_environment": [],
+          "revision": null
+        }
+      ]
+    }
+  ]
+}

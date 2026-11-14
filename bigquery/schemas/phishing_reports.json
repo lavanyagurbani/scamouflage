@@ -1,0 +1,42 @@
+[
+  {
+    "name": "phish_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "url",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "phish_detail_url",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "submission_time",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "verified",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "verification_time",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "online",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "target",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

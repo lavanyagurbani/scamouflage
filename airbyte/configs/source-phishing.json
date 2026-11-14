@@ -1,0 +1,9 @@
+{
+  "dataset_name": "phishing_reports",
+  "format": "csv",
+  "url": "/local/input/phishing_reports.csv",
+  "provider": {
+    "storage": "local"
+  },
+  "reader_options": "{\"dtype\": \"string\", \"encoding\": \"utf-8-sig\", \"keep_default_na\": false, \"na_filter\": false, \"skip_blank_lines\": false, \"on_bad_lines\": \"error\"}"
+}

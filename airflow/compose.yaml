@@ -1,0 +1,83 @@
+name: scamouflage-airflow
+
+x-airflow-env: &airflow-env
+  AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/state/airflow.db?timeout=60
+  AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+  AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+  AIRFLOW__CORE__PARALLELISM: '1'
+  AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG: '1'
+  AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: '1'
+  AIRFLOW__SCHEDULER__PARSING_PROCESSES: '1'
+  AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL: '60'
+  AIRFLOW__WEBSERVER__WORKERS: '1'
+  AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_WEBSERVER_SECRET_KEY:?Set AIRFLOW_WEBSERVER_SECRET_KEY in .env}
+  AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS: 'false'
+  AIRFLOW__CORE__DEFAULT_TIMEZONE: UTC
+  AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: '60'
+  GCP_PROJECT_ID: scamouflage
+  GOOGLE_CLOUD_PROJECT: scamouflage
+  GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/credentials/adc.json
+  DBT_SEND_ANONYMOUS_USAGE_STATS: 'false'
+  DBT_TARGET_PATH: /opt/airflow/dbt-target
+  DBT_LOG_PATH: /opt/airflow/logs/dbt
+  PYTHONDONTWRITEBYTECODE: '1'
+
+x-airflow: &airflow
+  image: scamouflage-airflow:2.11.1-dbt1.7.20
+  build:
+    context: .
+    dockerfile: Dockerfile
+  user: '50000:0'
+  environment: *airflow-env
+  volumes:
+    - ./dags:/opt/airflow/dags:ro
+    - ../scripts:/workspace/scripts:ro
+    - ../bigquery:/workspace/bigquery:ro
+    - ../data:/workspace/data:ro
+    - ../dbt:/workspace/dbt:ro
+    - type: bind
+      source: ${ADC_FILE:?Set ADC_FILE to the existing ADC JSON path}
+      target: /opt/airflow/credentials/adc.json
+      read_only: true
+      bind:
+        create_host_path: false
+    - airflow-state:/opt/airflow/state
+    - airflow-logs:/opt/airflow/logs
+    - dbt-target:/opt/airflow/dbt-target
+  mem_limit: 1536m
+  cpus: 1.0
+
+services:
+  airflow-init:
+    <<: *airflow
+    profiles: [init]
+    environment:
+      <<: *airflow-env
+      AIRFLOW_ADMIN_USERNAME: ${AIRFLOW_ADMIN_USERNAME:-admin}
+      AIRFLOW_ADMIN_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD:?Set AIRFLOW_ADMIN_PASSWORD in .env}
+    command: [bash, -c, 'set -euo pipefail; airflow db migrate; python /opt/airflow/init_user.py']
+    restart: 'no'
+
+  airflow-webserver:
+    <<: *airflow
+    command: webserver
+    ports: ['127.0.0.1:8080:8080']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=10)"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    mem_limit: 1024m
+
+  airflow-scheduler:
+    <<: *airflow
+    command: scheduler
+    restart: unless-stopped
+
+volumes:
+  airflow-state:
+  airflow-logs:
+  dbt-target:

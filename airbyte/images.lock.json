@@ -1,0 +1,33 @@
+{
+  "images": {
+    "source": {
+      "repository": "airbyte/source-file",
+      "tag": "0.6.2",
+      "platforms": {
+        "amd64": {
+          "image": "airbyte/source-file@sha256:61a0a57dcc3a7e2cef473a094e765afe8ed606788042279e04297a0f71fb054a",
+          "compressed_layer_bytes": 262595608
+        },
+        "arm64": {
+          "image": "airbyte/source-file@sha256:5d464cb1ac1de835d73802aec3ee8de7c2a47ed344e3395dfb58cad69e328125",
+          "compressed_layer_bytes": 252912574
+        }
+      }
+    },
+    "destination": {
+      "repository": "airbyte/destination-sqlite",
+      "tag": "0.2.9",
+      "platforms": {
+        "amd64": {
+          "image": "airbyte/destination-sqlite@sha256:47265c0feb98b46e4484120b0b957ef02d3b8274c45d6ec1c41b6671424b5410",
+          "compressed_layer_bytes": 240411410
+        },
+        "arm64": {
+          "image": "airbyte/destination-sqlite@sha256:bceeb5c94c8f7fbc8620ca1151976831574bff2a2b353196de0fab812fb62f5f",
+          "compressed_layer_bytes": 233910708
+        }
+      }
+    }
+  },
+  "selection_reason": "Current stable catalog tags; source 0.6.2 slightly smaller than 0.6.0; older SQLite 0.2.6 saves only about 8 MiB. Platform digests verified from registry metadata; no layers pulled."
+}

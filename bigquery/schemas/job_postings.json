@@ -1,0 +1,92 @@
+[
+  {
+    "name": "job_id",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "title",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "location",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "department",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "salary_range",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "company_profile",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "description",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "requirements",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "benefits",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "telecommuting",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "has_company_logo",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "has_questions",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "employment_type",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "required_experience",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "required_education",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "industry",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "function",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "fraudulent",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

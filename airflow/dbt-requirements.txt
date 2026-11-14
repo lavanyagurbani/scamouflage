@@ -1,0 +1,7 @@
+# Separate Linux environment, matching the user's known working dbt versions.
+dbt-core==1.7.20
+dbt-bigquery==1.7.9
+google-cloud-bigquery==3.25.0
+# Keep dbt 1.7 compatible with its original protobuf/NumPy major versions.
+protobuf>=4.25.3,<5
+numpy>=1.26,<2

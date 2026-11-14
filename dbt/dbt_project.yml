@@ -1,0 +1,20 @@
+name: scamouflage
+version: '1.0.0'
+config-version: 2
+profile: scamouflage
+require-dbt-version: [">=1.7.0", "<2.0.0"]
+model-paths: [models]
+macro-paths: [macros]
+test-paths: [tests]
+flags:
+  send_anonymous_usage_stats: false
+models:
+  scamouflage:
+    +materialized: view
+    +persist_docs: {relation: false, columns: false}
+tests:
+  scamouflage:
+    +store_failures: false
+vars:
+  expected_job_rows: 17880
+  expected_phishing_rows: 45680

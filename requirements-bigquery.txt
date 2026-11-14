@@ -1,0 +1,3 @@
+# Optional Phase 2 client only; compatible major line, not a resolved lockfile.
+# Upstream currently supports Python >=3.10. No dependencies installed by this task.
+google-cloud-bigquery>=3,<4

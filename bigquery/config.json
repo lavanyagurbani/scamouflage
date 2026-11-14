@@ -1,0 +1,12 @@
+{
+  "project_id": "scamouflage",
+  "location": "US",
+  "raw_dataset": "scamouflage_raw",
+  "analytics_dataset": "scamouflage_analytics",
+  "default_table_expiration_days": 60,
+  "maximum_bytes_billed": 104857600,
+  "schemas": {
+    "jobs": "bigquery/schemas/job_postings.json",
+    "phishing": "bigquery/schemas/phishing_reports.json"
+  }
+}

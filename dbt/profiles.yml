@@ -1,0 +1,16 @@
+# Project-local profile; use --profiles-dir dbt from the repository root.
+# oauth uses existing Application Default Credentials; no key file needed.
+scamouflage:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: scamouflage
+      dataset: scamouflage_analytics
+      location: US
+      threads: 1
+      priority: interactive
+      job_retries: 0
+      job_execution_timeout_seconds: 120
+      maximum_bytes_billed: 104857600

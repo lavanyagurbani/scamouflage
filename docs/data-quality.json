@@ -1,0 +1,409 @@
+{
+  "jobs": {
+    "file": "fake_job_postings.csv",
+    "bytes": 50061601,
+    "sha256": "59253295129d8b6a27607f9904f7d4ddf4dbb0ee35e079c7eb51b58b5e62bf60",
+    "unchanged_during_inspection": true,
+    "rows": 17880,
+    "columns": {
+      "job_id": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 5,
+        "max_utf8_bytes": 5,
+        "nonblank": 17880,
+        "integer_compatible": 17880,
+        "distinct_nonblank_trimmed": 17880,
+        "repeated_nonblank_trimmed": 0
+      },
+      "title": {
+        "blank": 0,
+        "outer_whitespace": 2202,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 142,
+        "max_utf8_bytes": 142,
+        "nonblank": 17880,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 10915,
+        "repeated_nonblank_trimmed": 6965
+      },
+      "location": {
+        "blank": 346,
+        "outer_whitespace": 2000,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 161,
+        "max_utf8_bytes": 161,
+        "nonblank": 17534,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 2990,
+        "repeated_nonblank_trimmed": 14544
+      },
+      "department": {
+        "blank": 11553,
+        "outer_whitespace": 229,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 255,
+        "max_utf8_bytes": 255,
+        "nonblank": 6327,
+        "integer_compatible": 9,
+        "distinct_nonblank_trimmed": 1276,
+        "repeated_nonblank_trimmed": 5051
+      },
+      "salary_range": {
+        "blank": 15012,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 20,
+        "max_utf8_bytes": 20,
+        "nonblank": 2868,
+        "integer_compatible": 1,
+        "distinct_nonblank_trimmed": 874,
+        "repeated_nonblank_trimmed": 1994
+      },
+      "company_profile": {
+        "blank": 3308,
+        "outer_whitespace": 1991,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 6178,
+        "max_utf8_bytes": 6230,
+        "nonblank": 14572,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 1708,
+        "repeated_nonblank_trimmed": 12864
+      },
+      "description": {
+        "blank": 1,
+        "outer_whitespace": 3525,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 1,
+        "max_characters": 14907,
+        "max_utf8_bytes": 22722,
+        "nonblank": 17879,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 14666,
+        "repeated_nonblank_trimmed": 3213
+      },
+      "requirements": {
+        "blank": 2696,
+        "outer_whitespace": 2233,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 2,
+        "max_characters": 10864,
+        "max_utf8_bytes": 10921,
+        "nonblank": 15184,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 11900,
+        "repeated_nonblank_trimmed": 3284
+      },
+      "benefits": {
+        "blank": 7214,
+        "outer_whitespace": 1256,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 7,
+        "max_characters": 4429,
+        "max_utf8_bytes": 4489,
+        "nonblank": 10666,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 6082,
+        "repeated_nonblank_trimmed": 4584
+      },
+      "telecommuting": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 1,
+        "max_utf8_bytes": 1,
+        "nonblank": 17880,
+        "integer_compatible": 17880,
+        "distinct_nonblank_trimmed": 2,
+        "repeated_nonblank_trimmed": 17878
+      },
+      "has_company_logo": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 1,
+        "max_utf8_bytes": 1,
+        "nonblank": 17880,
+        "integer_compatible": 17880,
+        "distinct_nonblank_trimmed": 2,
+        "repeated_nonblank_trimmed": 17878
+      },
+      "has_questions": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 1,
+        "max_utf8_bytes": 1,
+        "nonblank": 17880,
+        "integer_compatible": 17880,
+        "distinct_nonblank_trimmed": 2,
+        "repeated_nonblank_trimmed": 17878
+      },
+      "employment_type": {
+        "blank": 3471,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 9,
+        "max_utf8_bytes": 9,
+        "nonblank": 14409,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 5,
+        "repeated_nonblank_trimmed": 14404
+      },
+      "required_experience": {
+        "blank": 7050,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 16,
+        "max_utf8_bytes": 16,
+        "nonblank": 10830,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 7,
+        "repeated_nonblank_trimmed": 10823
+      },
+      "required_education": {
+        "blank": 8105,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 33,
+        "max_utf8_bytes": 33,
+        "nonblank": 9775,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 13,
+        "repeated_nonblank_trimmed": 9762
+      },
+      "industry": {
+        "blank": 4903,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 36,
+        "max_utf8_bytes": 36,
+        "nonblank": 12977,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 131,
+        "repeated_nonblank_trimmed": 12846
+      },
+      "function": {
+        "blank": 6455,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 22,
+        "max_utf8_bytes": 22,
+        "nonblank": 11425,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 37,
+        "repeated_nonblank_trimmed": 11388
+      },
+      "fraudulent": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 1,
+        "max_utf8_bytes": 1,
+        "nonblank": 17880,
+        "integer_compatible": 17880,
+        "distinct_nonblank_trimmed": 2,
+        "repeated_nonblank_trimmed": 17878
+      }
+    },
+    "flag_counts": {
+      "telecommuting": {
+        "0": 17113,
+        "1": 767
+      },
+      "has_company_logo": {
+        "1": 14220,
+        "0": 3660
+      },
+      "has_questions": {
+        "0": 9088,
+        "1": 8792
+      },
+      "fraudulent": {
+        "0": 17014,
+        "1": 866
+      }
+    },
+    "quality": {
+      "duplicate_content_excluding_id": 281,
+      "location_not_three_comma_parts": 214,
+      "salary_not_simple_numeric_range": 27,
+      "salary_lower_exceeds_upper": 0
+    },
+    "timestamp_ranges": {}
+  },
+  "phishing": {
+    "file": "phishing_reports.csv",
+    "bytes": 8795146,
+    "sha256": "cd1d8e9792f8e792655c1ca59da85bb2f004928bfccc9ee4a87662482c68786a",
+    "unchanged_during_inspection": true,
+    "rows": 45680,
+    "columns": {
+      "phish_id": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 7,
+        "max_utf8_bytes": 7,
+        "nonblank": 45680,
+        "integer_compatible": 45680,
+        "distinct_nonblank_trimmed": 45680,
+        "repeated_nonblank_trimmed": 0
+      },
+      "url": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 25523,
+        "max_utf8_bytes": 25523,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "invalid_http_url_structure": 0,
+        "url_userinfo_present": 8,
+        "distinct_nonblank_trimmed": 45678,
+        "repeated_nonblank_trimmed": 2
+      },
+      "phish_detail_url": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 58,
+        "max_utf8_bytes": 58,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "invalid_http_url_structure": 0,
+        "url_userinfo_present": 0,
+        "distinct_nonblank_trimmed": 45680,
+        "repeated_nonblank_trimmed": 0
+      },
+      "submission_time": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 25,
+        "max_utf8_bytes": 25,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 45096,
+        "repeated_nonblank_trimmed": 584
+      },
+      "verified": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 3,
+        "max_utf8_bytes": 3,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 1,
+        "repeated_nonblank_trimmed": 45679
+      },
+      "verification_time": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 25,
+        "max_utf8_bytes": 25,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 19255,
+        "repeated_nonblank_trimmed": 26425
+      },
+      "online": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 3,
+        "max_utf8_bytes": 3,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 1,
+        "repeated_nonblank_trimmed": 45679
+      },
+      "target": {
+        "blank": 0,
+        "outer_whitespace": 0,
+        "multiline": 0,
+        "nul_characters": 0,
+        "null_like_literal": 0,
+        "max_characters": 40,
+        "max_utf8_bytes": 40,
+        "nonblank": 45680,
+        "integer_compatible": 0,
+        "distinct_nonblank_trimmed": 92,
+        "repeated_nonblank_trimmed": 45588
+      }
+    },
+    "flag_counts": {
+      "verified": {
+        "yes": 45680
+      },
+      "online": {
+        "yes": 45680
+      }
+    },
+    "quality": {
+      "duplicate_content_excluding_id": 0,
+      "verification_before_submission": 0
+    },
+    "timestamp_ranges": {
+      "submission_time": {
+        "min": "2012-06-14T15:19:26+00:00",
+        "max": "2026-11-13T21:02:46+00:00"
+      },
+      "verification_time": {
+        "min": "2012-06-14T15:29:11+00:00",
+        "max": "2026-11-13T21:12:03+00:00"
+      }
+    }
+  }
+}

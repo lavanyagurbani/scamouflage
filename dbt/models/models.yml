@@ -1,0 +1,19 @@
+version: 2
+models:
+  - name: stg_job_postings
+    description: "One row per raw posting; trimmed text and normalized booleans; IDs remain STRING."
+    columns:
+      - {name: job_id, description: "Trimmed source identifier; uniqueness supported by inspected profile."}
+      - {name: is_fraudulent, description: "Source label normalized to BOOL; unrecognized tokens become NULL."}
+  - name: stg_phishing_reports
+    description: "One row per report; inert full URL strings, BOOL flags and safely parsed UTC dates."
+    columns:
+      - {name: phish_id, description: "Trimmed source report identifier."}
+      - {name: submitted_at, description: "SAFE_CAST of source submission_time to TIMESTAMP."}
+      - {name: verified_at, description: "SAFE_CAST of source verification_time to TIMESTAMP."}
+  - name: mart_job_fraud_overview
+    description: "One overall row; fraud_rate is a fraction of labeled postings, not a prediction."
+  - name: mart_job_fraud_patterns
+    description: "One row per dimension name/value. NULL values are missing categories; dimensions overlap."
+  - name: mart_phishing_daily
+    description: "One row per UTC submission date/target/status combination; URL counts are distinct within each group."
