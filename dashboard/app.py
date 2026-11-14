@@ -7,6 +7,8 @@ import streamlit as st
 
 from dashboard.bigquery_reader import DashboardError, read_query, validate_project
 from dashboard.queries import DIMENSIONS, PROJECT, QuerySpec, SUPPORTED_QUESTIONS, match_question
+from dashboard.presentation import (PAGES, PAGE_DESCRIPTIONS, THEME_KEY, chart_spec,
+                                    selected_theme, stylesheet, tokens)
 
 
 @st.cache_data(ttl=600, max_entries=32, show_spinner=False)
@@ -22,9 +24,27 @@ def load(spec, project):
 
 
 def metric_cards(items):
-    for column, (label, value) in zip(st.columns(len(items)), items):
-        with column, st.container(border=True):
-            st.metric(label, value)
+    with st.container(key='pearl-kpis'):
+        for index, (column, (label, value)) in enumerate(zip(st.columns(len(items)), items)):
+            with column, st.container(border=True, key=f'pearl-kpi-{index}'):
+                st.metric(label, value)
+
+
+def themed_chart(data, kind='bar', secondary=False):
+    mode = selected_theme(st.session_state)
+    frame = data.to_frame().copy() if isinstance(data, pd.Series) else data.copy()
+    frame.index.name = frame.index.name or ('Date' if kind == 'line' else 'Category')
+    x_field, y_field = frame.index.name, frame.columns[0]
+    with st.container(border=True):
+        st.vega_lite_chart(frame.reset_index(),
+                           spec=chart_spec(mode, kind, x_field, y_field, secondary),
+                           theme=None, use_container_width=True)
+
+
+def themed_dataframe(frame, **kwargs):
+    palette = tokens(selected_theme(st.session_state))
+    styled = frame.style.set_properties(**{'background-color': palette['surface'], 'color': palette['text']})
+    st.dataframe(styled, **kwargs)
 
 
 def percent(value):
@@ -32,7 +52,7 @@ def percent(value):
 
 
 def overview(project):
-    st.subheader('The snapshot at a glance')
+    st.subheader('Snapshot overview')
     row = load(QuerySpec('overview'), project).iloc[0]
     metric_cards([
         ('Job postings', f"{int(row['total_postings']):,}"),
@@ -47,7 +67,7 @@ def overview(project):
             'Label': ['Non-fraudulent', 'Fraudulent', 'Unknown'],
             'Postings': [row['non_fraudulent_postings'], row['fraudulent_postings'], row['unknown_label_postings']],
         }).set_index('Label')
-        st.bar_chart(labels, color='#16a085', use_container_width=True)
+        themed_chart(labels)
     with right, st.container(border=True):
         st.markdown('#### Read the numbers in context')
         st.write('Fraud rates use postings with a known source label. They describe this dataset, not a prediction.')
@@ -58,7 +78,7 @@ def overview(project):
 
 
 def jobs(project):
-    st.subheader('Explore job fraud patterns')
+    st.subheader('Job fraud patterns')
     st.caption('Compare one dimension at a time. Locations are the complete source strings; no geography is inferred.')
     controls = st.columns([2, 2, 1])
     dimension = controls[0].selectbox('Break down by', list(DIMENSIONS), format_func=DIMENSIONS.get)
@@ -84,9 +104,9 @@ def jobs(project):
     ranked = frame.sort_values([key, 'total_postings', 'Category'], ascending=[False, False, True]).head(top_n).copy()
     ranked['Fraud rate (%)'] = ranked['fraud_rate'] * 100
     chart_key = 'Fraud rate (%)' if key == 'fraud_rate' else key
-    st.bar_chart(ranked.set_index('Category')[[chart_key]], color='#d97757', use_container_width=True)
+    themed_chart(ranked.set_index('Category')[[chart_key]], secondary=True)
     st.caption('Cards cover all matching categories; the chart and table show only the top categories. Small samples can have unstable rates.')
-    st.dataframe(ranked[['Category', 'total_postings', 'labeled_postings', 'fraudulent_postings', 'Fraud rate (%)']],
+    themed_dataframe(ranked[['Category', 'total_postings', 'labeled_postings', 'fraudulent_postings', 'Fraud rate (%)']],
                  hide_index=True, use_container_width=True,
                  column_config={'Category': st.column_config.TextColumn('Category'),
                                 'Fraud rate (%)': st.column_config.NumberColumn(format='%.2f')})
@@ -132,12 +152,12 @@ def phishing(project):
     metric_cards([('Reports in selection', f"{int(selected['report_count'].sum()):,}"),
                   ('Target categories', f"{selected['target'].nunique():,}")])
     daily = selected.groupby('submission_date')['report_count'].sum().reindex(pd.date_range(first, last), fill_value=0)
-    st.line_chart(daily.rename('Reports'), color='#16a085', use_container_width=True)
+    themed_chart(daily.rename('Reports'), kind='line')
     st.caption('Dates with no matching records show zero reports in this snapshot, not zero real-world phishing activity.')
     st.markdown('#### Most reported targets in selection')
     totals = selected.groupby('target', dropna=False)['report_count'].sum().sort_values(ascending=False).head(10)
-    st.bar_chart(totals.rename('Reports'), color='#d97757', use_container_width=True)
-    st.dataframe(daily.rename_axis('Date').reset_index(name='Reports'), hide_index=True, use_container_width=True)
+    themed_chart(totals.rename('Reports'), secondary=True)
+    themed_dataframe(daily.rename_axis('Date').reset_index(name='Reports'), hide_index=True, use_container_width=True)
 
 
 def answer(question, rows):
@@ -203,37 +223,63 @@ def conversation(project):
             st.text(message['text'])
             if message['data'] is not None:
                 data = message['data']
-                st.dataframe(data, hide_index=True, use_container_width=True,
+                themed_dataframe(data, hide_index=True, use_container_width=True,
                              column_config={c: st.column_config.TextColumn(c) for c in data.select_dtypes(include='object').columns})
 
 
+def pipeline_status(project):
+    st.subheader('Verified workflow, clearly separated')
+    st.info('Recorded implementation results. This page does not poll services or submit queries.')
+    stages = [
+        ('01 / Extract & land', 'Airbyte File → SQLite',
+         'Real standalone connector full sync completed with exact field-fidelity checks. No native Airbyte BigQuery destination.'),
+        ('02 / Batch bridge', 'SQLite → BigQuery Sandbox',
+         'A separate Python batch bridge loaded verified Airbyte output into new proof tables.'),
+        ('03 / Transform', 'dbt analytics views',
+         'Five views and four passing data tests in the verified workflow. Models describe source labels and report snapshots.'),
+        ('04 / Orchestrate', 'Airflow, independently',
+         'The successful DAG runs existing ingestion → dbt run → dbt test. It does not orchestrate the Airbyte bridge.'),
+    ]
+    for index in range(0, len(stages), 2):
+        for column, (eyebrow, title, description) in zip(st.columns(2), stages[index:index + 2]):
+            with column, st.container(border=True):
+                st.caption(eyebrow.upper())
+                st.markdown('#### ' + title)
+                st.write(description)
+    st.caption('The dashboard reads existing aggregate analytics views through ADC. No streaming ingestion, prediction, or live URL checking.')
+
+
 def main():
-    st.set_page_config(page_title='Scamouflage | Fraud analytics', page_icon='🛡️', layout='wide')
-    # Static styling only; no source values or user input is injected into HTML.
-    st.markdown('''<style>
-        .block-container {max-width: 1280px; padding-top: 2rem;}
-        [data-testid="stMetricValue"] {color: #169b87;}
-        [data-testid="stSidebar"] {border-right: 1px solid #dae8e4;}
-        h1 {letter-spacing: -0.04em;}
-        </style>''', unsafe_allow_html=True)
-    st.title('Scamouflage')
-    st.caption('FRAUD ANALYTICS / Evidence from job labels and phishing report snapshots')
+    st.set_page_config(page_title='Scamouflage — Pearl Frost 2.0', layout='wide')
+    selected_theme(st.session_state)
     with st.sidebar:
         st.markdown('### Scamouflage')
-        st.caption('Local analytics workspace')
-        page = st.radio('Explore', ['Overview', 'Job fraud', 'Phishing trends', 'Ask Scamouflage'])
+        st.caption('PEARL FROST 2.0')
         st.divider()
-        st.markdown('**Data source: BigQuery Sandbox**')
+        page = st.radio('Workspace', PAGES, key='pearl_navigation', label_visibility='collapsed')
+        st.divider()
+        st.markdown('**BigQuery Sandbox**')
+        st.caption('Historical snapshots · Read-only analytics')
         st.text('scamouflage · US\nscamouflage_analytics')
-        st.caption('Read-only analytics · ADC authentication\n100 MiB cap per query · 10-minute cache')
+        st.caption('ADC authentication\n100 MiB cap per query · 10-minute cache')
         if st.button('Refresh cached analytics', use_container_width=True):
             cached_read.clear()
-        st.caption('Refreshing clears the cache; the next data request submits a new read. Chat history retains earlier answers.')
+        st.caption('Clears cached data for the next read. Prior chat answers retain their original timestamps.')
+    heading, appearance = st.columns([4, 1])
+    with heading:
+        st.caption('SCAMOUFLAGE / PEARL FROST 2.0')
+        st.title(page)
+        st.caption(PAGE_DESCRIPTIONS[page])
+    with appearance, st.container(key='pearl-theme-toggle'):
+        st.caption('APPEARANCE')
+        st.radio('Theme', ['Light', 'Dark'], key=THEME_KEY, horizontal=True, label_visibility='collapsed')
+    st.markdown(stylesheet(selected_theme(st.session_state)), unsafe_allow_html=True)
+    st.divider()
     project = os.environ.get('GCP_PROJECT_ID', '')
     try:
         validate_project(project)
-        {'Overview': overview, 'Job fraud': jobs, 'Phishing trends': phishing,
-         'Ask Scamouflage': conversation}[page](project)
+        {'Overview': overview, 'Job Fraud Analytics': jobs, 'Phishing Intelligence': phishing,
+         'Ask Scamouflage': conversation, 'Pipeline Status': pipeline_status}[page](project)
     except DashboardError as exc:
         st.error(str(exc))
         st.info('No substitute data is shown. Restore access and use Refresh cached analytics to try again.')

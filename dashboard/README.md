@@ -127,3 +127,33 @@ No dbt, raw data or ingestion files changed.
 Created files: `dashboard/__init__.py`, `dashboard/app.py`,
 `dashboard/bigquery_reader.py`, `dashboard/queries.py`, `dashboard/requirements.txt`,
 this README, and `tests/test_dashboard.py`.
+
+## Pearl Frost 2.0
+
+The header's Light/Dark selector persists across widget reruns in the current
+Streamlit session. Both palettes style the navigation, cards, controls, tables and
+charts without external assets or added dependencies. Five sidebar pages separate
+the overview, job patterns, phishing trends, guided questions and pipeline status.
+Pipeline Status describes recorded verification results; it does not poll services.
+Guided questions still map only to the existing fixed, read-only queries.
+KPI surfaces have explicit delicate borders, padding and subtle shadows. Sidebar
+navigation retains native keyboard radio semantics with a text-only appearance
+and visible focus/active accents. Only Deploy and the main menu are hidden for
+local presentation; sidebar controls and error messages remain available.
+
+Run the dashboard checks offline (BigQuery reads are mocked in rendering tests):
+
+```powershell
+python -B -m unittest discover -s tests -p "test_dashboard*.py"
+```
+
+Preview from the project root using existing dependencies and ADC:
+
+```powershell
+$env:GCP_PROJECT_ID = "scamouflage"
+python -m streamlit run dashboard/app.py --server.address 127.0.0.1 --browser.gatherUsageStats false
+```
+
+The preview reads BigQuery; offline rendering tests do not. Review both themes and
+narrow-window layouts locally before submission. No cloud queries or browser
+visual review were performed for this redesign.
