@@ -1,4 +1,4 @@
-"""Pearl Frost 2.0 presentation tokens/specs. No data access or Streamlit imports."""
+"""Dashboard theme tokens and chart specs. No data access or Streamlit imports."""
 THEME_KEY = 'pearl_theme'
 THEMES = {
     'Light': {'background': '#F8F8FA', 'surface': '#FFFFFF', 'border': '#E9E7ED',
@@ -10,11 +10,11 @@ THEMES = {
 }
 PAGES = ('Overview', 'Job Fraud Analytics', 'Phishing Intelligence', 'Ask Scamouflage', 'Pipeline Status')
 PAGE_DESCRIPTIONS = {
-    'Overview': 'A clear view of the evidence. Job labels and phishing report snapshots, in context.',
-    'Job Fraud Analytics': 'Explore labeled fraud patterns. Keep the sample size beside every rate.',
-    'Phishing Intelligence': 'Understand report volumes across dates, targets, and source statuses.',
-    'Ask Scamouflage': 'A guided path from plain-English questions to trusted aggregate answers.',
-    'Pipeline Status': 'How the verified pieces fit together. A reference, not a live health check.',
+    'Overview': 'Job fraud labels and historical phishing report counts.',
+    'Job Fraud Analytics': 'Fraud rates and sample sizes by source category.',
+    'Phishing Intelligence': 'Report counts by date, target, and source status.',
+    'Ask Scamouflage': 'Supported questions mapped to fixed, read-only analytics queries.',
+    'Pipeline Status': 'Recorded pipeline verification results; no live health checks.',
 }
 
 

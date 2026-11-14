@@ -1,4 +1,4 @@
-# Scamouflage dashboard
+# scamouflage dashboard
 
 Local Streamlit analytics over existing BigQuery views. No LLM, table writes, raw
 phishing URLs, or live URL checks. The user has verified the live dashboard and
@@ -128,7 +128,7 @@ Created files: `dashboard/__init__.py`, `dashboard/app.py`,
 `dashboard/bigquery_reader.py`, `dashboard/queries.py`, `dashboard/requirements.txt`,
 this README, and `tests/test_dashboard.py`.
 
-## Pearl Frost 2.0
+## Dashboard layout and theme support
 
 The header's Light/Dark selector persists across widget reruns in the current
 Streamlit session. Both palettes style the navigation, cards, controls, tables and

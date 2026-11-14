@@ -1,7 +1,6 @@
-# Scamouflage
+# scamouflage
 
-**Scamouflage: An Automated Job Fraud and Phishing Data Engineering Pipeline**  
-*Unmasking Scams Through Data*
+Job Fraud and Phishing Analytics
 
 ## Current scope
 

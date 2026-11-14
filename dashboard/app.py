@@ -250,11 +250,11 @@ def pipeline_status(project):
 
 
 def main():
-    st.set_page_config(page_title='Scamouflage — Pearl Frost 2.0', layout='wide')
+    st.set_page_config(page_title='scamouflage', layout='wide')
     selected_theme(st.session_state)
     with st.sidebar:
-        st.markdown('### Scamouflage')
-        st.caption('PEARL FROST 2.0')
+        st.markdown('### scamouflage')
+        st.caption('Job Fraud and Phishing Analytics')
         st.divider()
         page = st.radio('Workspace', PAGES, key='pearl_navigation', label_visibility='collapsed')
         st.divider()
@@ -267,7 +267,7 @@ def main():
         st.caption('Clears cached data for the next read. Prior chat answers retain their original timestamps.')
     heading, appearance = st.columns([4, 1])
     with heading:
-        st.caption('SCAMOUFLAGE / PEARL FROST 2.0')
+        st.caption('scamouflage / Job Fraud and Phishing Analytics')
         st.title(page)
         st.caption(PAGE_DESCRIPTIONS[page])
     with appearance, st.container(key='pearl-theme-toggle'):

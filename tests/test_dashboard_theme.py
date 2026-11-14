@@ -1,4 +1,4 @@
-"""Offline Pearl Frost tests. All UI records are synthetic fixtures; no cloud reads."""
+"""Offline dashboard theme tests. All UI records are synthetic fixtures; no cloud reads."""
 from datetime import date
 import json
 import os
