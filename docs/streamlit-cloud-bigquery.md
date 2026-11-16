@@ -118,3 +118,10 @@ credentials, IAM changes or real BigQuery queries were used during these tests.
 For the confirmed raw-dependency denial, the user selected an aggregate-only
 boundary rather than direct raw-table grants. See the [diagnosis and approved
 access plan](bigquery-access-diagnosis.md); it is not yet applied in Cloud.
+
+## Current aggregate-only boundary and strict Cloud identity
+
+Follow [aggregate deployment](aggregate-deployment.md) for the current direct-raw
+aggregate view chain and root `GCP_AUTH_MODE` / `GCP_EXPECTED_SERVICE_ACCOUNT`
+settings. Do not authorize existing staging views. The dashboard's fixed SELECTs
+now target `scamouflage_dashboard`; historical dbt views remain unchanged.

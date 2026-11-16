@@ -86,7 +86,7 @@ class CredentialTests(unittest.TestCase):
         self.assertTrue(caught.exception.__suppress_context__)
 
     def test_reader_cloud_credentials_and_query_cap(self):
-        with patch('dashboard.auth.secret_value', return_value=fake_info()), \
+        with patch('dashboard.auth.secret_value', side_effect=lambda key, *args: fake_info() if key == 'gcp_service_account' else None), \
                 patch('google.oauth2.service_account.Credentials.from_service_account_info') as constructor, \
                 patch('google.cloud.bigquery.Client') as factory:
             client = factory.return_value.__enter__.return_value

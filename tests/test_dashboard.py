@@ -67,7 +67,7 @@ class QuestionTests(unittest.TestCase):
         for spec in [QuerySpec('overview'), QuerySpec('patterns', (('dimension', 'location'),)),
                      QuerySpec('phishing'), QuerySpec('target_trend', (('target', 'Example'),))]:
             sql, _ = build_query(spec)
-            tables = re.findall(r'`scamouflage\.scamouflage_analytics\.([^`]+)`', sql)
+            tables = re.findall(r'`scamouflage\.scamouflage_dashboard\.([^`]+)`', sql)
             self.assertTrue(tables)
             self.assertTrue(set(tables) <= allowed)
             self.assertNotRegex(sql, r'(?i)\b(CREATE|DROP|INSERT|UPDATE|DELETE|MERGE|EXPORT|CALL)\b')

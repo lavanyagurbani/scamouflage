@@ -192,3 +192,10 @@ entrypoint directory and an unrelated temporary directory; full suite **64 passe
 2 real-model tests skipped** (66 discovered). A local headless Streamlit process
 returned HTTP 200 with `ok` from its health endpoint and was stopped afterward.
 Hosted redeployment was not directly inspected during these local checks.
+
+## Aggregate-only Cloud deployment
+
+Dashboard queries use the authorized aggregate views in `scamouflage_dashboard`,
+with unchanged query limits. Follow [the deployment guide](../docs/aggregate-deployment.md)
+for the strict Cloud service-account settings and live identity diagnostic.
+Local ADC remains available in auto mode. Existing dbt analytics views are retained.

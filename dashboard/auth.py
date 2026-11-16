@@ -6,6 +6,7 @@ from dashboard.queries import PROJECT
 
 TOKEN_URI = 'https://oauth2.googleapis.com/token'
 BIGQUERY_SCOPE = 'https://www.googleapis.com/auth/bigquery'
+DASHBOARD_SERVICE_ACCOUNT = 'scamouflage-dashboard-reader@scamouflage.iam.gserviceaccount.com'
 
 
 class DashboardError(Exception):
@@ -45,10 +46,27 @@ def resolve_project(secrets=None, environ=None):
     return value
 
 
+def expected_service_account(secrets=None):
+    mode = secret_value('GCP_AUTH_MODE', secrets)
+    if mode is None:
+        mode = os.environ.get('GCP_AUTH_MODE', 'auto')
+    expected = secret_value('GCP_EXPECTED_SERVICE_ACCOUNT', secrets)
+    if expected is None:
+        expected = os.environ.get('GCP_EXPECTED_SERVICE_ACCOUNT', '')
+    if mode not in ('auto', 'service_account'):
+        raise DashboardError('GCP_AUTH_MODE must be auto for local ADC fallback or service_account for Cloud.')
+    if expected and expected != DASHBOARD_SERVICE_ACCOUNT:
+        raise DashboardError('The configured expected service account is not the approved dashboard reader.')
+    return DASHBOARD_SERVICE_ACCOUNT if mode == 'service_account' or expected else None
+
+
 def get_credentials(secrets=None):
     """Return explicit Cloud credentials, or None to let BigQuery discover ADC."""
+    expected = expected_service_account(secrets)
     info = secret_value('gcp_service_account', secrets)
     if info is None:
+        if expected:
+            raise DashboardError('Cloud service-account credentials are required. Local ADC fallback is disabled in this mode.')
         return None
     message = 'The gcp_service_account secret is invalid. Check its service-account fields in secure Cloud settings.'
     if not isinstance(info, Mapping):
@@ -64,6 +82,8 @@ def get_credentials(secrets=None):
             or info['token_uri'] != TOKEN_URI
             or info.get('universe_domain', 'googleapis.com') != 'googleapis.com'):
         raise DashboardError(message)
+    if expected and info['client_email'] != expected:
+        raise DashboardError('Cloud credentials do not match the approved dashboard service-account identity.')
     info['private_key'] = info['private_key'].replace('\\n', '\n')
     try:
         from google.oauth2 import service_account

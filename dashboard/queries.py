@@ -18,32 +18,32 @@ _SQL = {
         SELECT j.total_postings, j.labeled_postings, j.fraudulent_postings,
                j.non_fraudulent_postings, j.unknown_label_postings, j.fraud_rate,
                p.phishing_reports, p.target_count, p.first_date, p.last_date
-        FROM `scamouflage.scamouflage_analytics.mart_job_fraud_overview` AS j
+        FROM `scamouflage.scamouflage_dashboard.mart_job_fraud_overview` AS j
         CROSS JOIN (
             SELECT COALESCE(SUM(report_count), 0) AS phishing_reports,
                    COUNT(DISTINCT target) AS target_count,
                    MIN(submission_date) AS first_date, MAX(submission_date) AS last_date
-            FROM `scamouflage.scamouflage_analytics.mart_phishing_daily`
+            FROM `scamouflage.scamouflage_dashboard.mart_phishing_daily`
         ) AS p
         LIMIT 2
     """,
     'patterns': """
         SELECT dimension_name, dimension_value, total_postings, labeled_postings,
                fraudulent_postings, non_fraudulent_postings, unknown_label_postings, fraud_rate
-        FROM `scamouflage.scamouflage_analytics.mart_job_fraud_patterns`
+        FROM `scamouflage.scamouflage_dashboard.mart_job_fraud_patterns`
         WHERE dimension_name = @dimension
         ORDER BY total_postings DESC, dimension_value
         LIMIT 10001
     """,
     'phishing': """
         SELECT submission_date, target, is_verified, is_online, report_count
-        FROM `scamouflage.scamouflage_analytics.mart_phishing_daily`
+        FROM `scamouflage.scamouflage_dashboard.mart_phishing_daily`
         ORDER BY submission_date, target, is_verified, is_online
         LIMIT 10001
     """,
     'target_trend': """
         SELECT submission_date, SUM(report_count) AS report_count
-        FROM `scamouflage.scamouflage_analytics.mart_phishing_daily`
+        FROM `scamouflage.scamouflage_dashboard.mart_phishing_daily`
         WHERE LOWER(target) = LOWER(@target)
         GROUP BY submission_date
         ORDER BY submission_date

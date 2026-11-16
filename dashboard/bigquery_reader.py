@@ -1,7 +1,7 @@
 """Read-only execution boundary. No Streamlit, pandas or cloud activity on import."""
 from dashboard.queries import LOCATION, MAX_BYTES, MAX_ROWS, PROJECT, build_query
 
-from dashboard.auth import DashboardError, get_credentials, validate_project
+from dashboard.auth import DashboardError, expected_service_account, get_credentials, validate_project
 
 
 def forbidden_message(error):
@@ -23,6 +23,37 @@ def forbidden_message(error):
     return 'Access or Sandbox quota denied. Check analytics-view read/job permissions and quota; do not enable billing.'
 
 
+def _verify_identity(client, expected):
+    if not expected:
+        return None
+    from google.cloud import bigquery
+    job = client.query('SELECT SESSION_USER() AS principal',
+                       job_config=bigquery.QueryJobConfig(use_legacy_sql=False, use_query_cache=False,
+                           maximum_bytes_billed=MAX_BYTES, job_timeout_ms=60000),
+                       project=PROJECT, location=LOCATION, retry=None, job_retry=None, timeout=30)
+    rows = list(job.result(retry=None, timeout=30, max_results=2))
+    if len(rows) != 1 or rows[0]['principal'] != expected:
+        raise DashboardError('BigQuery execution identity did not match the approved dashboard reader. Analytics was not queried.')
+    return expected
+
+
+def verify_cloud_identity(project):
+    """Explicit uncached hosted check; returns only the approved non-secret email."""
+    validate_project(project)
+    expected = expected_service_account()
+    if not expected:
+        raise DashboardError('Set GCP_AUTH_MODE=service_account and GCP_EXPECTED_SERVICE_ACCOUNT in Cloud Secrets first.')
+    try:
+        from google.cloud import bigquery
+        credentials = get_credentials()
+        with bigquery.Client(project=PROJECT, location=LOCATION, credentials=credentials) as client:
+            return _verify_identity(client, expected)
+    except DashboardError:
+        raise
+    except Exception:
+        raise DashboardError('The uncached Cloud identity check could not complete. No credentials or API details are displayed.') from None
+
+
 def read_query(spec, project):
     validate_project(project)
     sql, parameters = build_query(spec)
@@ -40,6 +71,7 @@ def read_query(spec, project):
         if credentials is not None:
             options['credentials'] = credentials
         with bigquery.Client(**options) as client:
+            _verify_identity(client, expected_service_account())
             config = bigquery.QueryJobConfig(
                 use_legacy_sql=False, maximum_bytes_billed=MAX_BYTES,
                 use_query_cache=True, job_timeout_ms=60000,
@@ -59,7 +91,7 @@ def read_query(spec, project):
     except Forbidden as error:
         raise DashboardError(forbidden_message(error)) from None
     except NotFound:
-        raise DashboardError('An analytics view is missing or expired, or its location differs. Verify the Phase 4 views in US.') from None
+        raise DashboardError('An aggregate boundary view is missing or expired, or its location differs. Verify scamouflage_dashboard views in US.') from None
     except BadRequest:
         raise DashboardError('BigQuery rejected the query or its 100 MiB byte cap. Verify view schemas and limits; no limit was increased.') from None
     except (GoogleAPICallError, TransportError, RequestException, TimeoutError, OSError):

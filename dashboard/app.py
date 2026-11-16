@@ -12,7 +12,7 @@ if _PROJECT_ROOT not in sys.path:
 import pandas as pd
 import streamlit as st
 
-from dashboard.bigquery_reader import DashboardError, read_query
+from dashboard.bigquery_reader import DashboardError, read_query, verify_cloud_identity
 from dashboard.queries import DIMENSIONS, PROJECT, QuerySpec, SUPPORTED_QUESTIONS, match_question
 from dashboard.check_job import render as check_job
 from dashboard.auth import resolve_project
@@ -269,11 +269,24 @@ def main():
         st.divider()
         st.markdown('**BigQuery Sandbox**')
         st.caption('Historical snapshots · Read-only analytics')
-        st.text('scamouflage · US\nscamouflage_analytics')
+        st.text('scamouflage · US\nscamouflage_dashboard')
         st.caption('Cloud Secrets or local ADC\n100 MiB cap per query · 10-minute cache')
         if st.button('Refresh cached analytics', use_container_width=True):
             cached_read.clear()
         st.caption('Clears cached data for the next read. Prior chat answers retain their original timestamps.')
+        with st.expander('Connection diagnostics'):
+            if st.button('Verify Cloud identity', key='verify_cloud_identity'):
+                st.session_state.pop('cloud_identity_check', None)
+                try:
+                    identity = verify_cloud_identity(resolve_project())
+                    st.session_state['cloud_identity_check'] = (identity, datetime.now(timezone.utc).strftime('%H:%M:%S UTC'))
+                except DashboardError as exc:
+                    st.error(str(exc))
+            check = st.session_state.get('cloud_identity_check')
+            if check:
+                st.text('Cloud identity verified: ' + check[0])
+                st.caption('Uncached check completed at ' + check[1] + '. This verifies identity, not every data permission.')
+
     heading, appearance = st.columns([4, 1])
     with heading:
         st.caption('scamouflage / Job Fraud and Phishing Analytics')
