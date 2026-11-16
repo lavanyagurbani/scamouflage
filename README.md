@@ -272,3 +272,5 @@ Run offline tests from a fresh clone after installing `requirements-dev.txt`:
 Scamouflage is an analytics and data engineering demonstration with a baseline ML job-content classifier. It does not perform automatic website scraping, live threat intelligence, guaranteed fraud detection, or unrestricted natural-language-to-SQL generation. Automatic extraction is disabled for SSRF safety; users supply job text manually.
 
 Its primary objective is to demonstrate how data from multiple sources can be ingested, transformed, orchestrated, and explored through a cloud-based analytics workflow.
+
+Private Cloud checker artifact provisioning and rebuild instructions: [deployment guide](docs/private-checker-deployment.md).

@@ -47,7 +47,7 @@ def themed_chart(data, kind='bar', secondary=False):
     with st.container(border=True):
         st.vega_lite_chart(frame.reset_index(),
                            spec=chart_spec(mode, kind, x_field, y_field, secondary),
-                           theme=None, use_container_width=True)
+                           theme=None, width='stretch')
 
 
 def themed_dataframe(frame, **kwargs):
@@ -116,7 +116,7 @@ def jobs(project):
     themed_chart(ranked.set_index('Category')[[chart_key]], secondary=True)
     st.caption('Cards cover all matching categories; the chart and table show only the top categories. Small samples can have unstable rates.')
     themed_dataframe(ranked[['Category', 'total_postings', 'labeled_postings', 'fraudulent_postings', 'Fraud rate (%)']],
-                 hide_index=True, use_container_width=True,
+                 hide_index=True, width='stretch',
                  column_config={'Category': st.column_config.TextColumn('Category'),
                                 'Fraud rate (%)': st.column_config.NumberColumn(format='%.2f')})
 
@@ -166,7 +166,7 @@ def phishing(project):
     st.markdown('#### Most reported targets in selection')
     totals = selected.groupby('target', dropna=False)['report_count'].sum().sort_values(ascending=False).head(10)
     themed_chart(totals.rename('Reports'), secondary=True)
-    themed_dataframe(daily.rename_axis('Date').reset_index(name='Reports'), hide_index=True, use_container_width=True)
+    themed_dataframe(daily.rename_axis('Date').reset_index(name='Reports'), hide_index=True, width='stretch')
 
 
 def answer(question, rows):
@@ -232,7 +232,7 @@ def conversation(project):
             st.text(message['text'])
             if message['data'] is not None:
                 data = message['data']
-                themed_dataframe(data, hide_index=True, use_container_width=True,
+                themed_dataframe(data, hide_index=True, width='stretch',
                              column_config={c: st.column_config.TextColumn(c) for c in data.select_dtypes(include='object').columns})
 
 
@@ -271,7 +271,7 @@ def main():
         st.caption('Historical snapshots · Read-only analytics')
         st.text('scamouflage · US\nscamouflage_dashboard')
         st.caption('Cloud Secrets or local ADC\n100 MiB cap per query · 10-minute cache')
-        if st.button('Refresh cached analytics', use_container_width=True):
+        if st.button('Refresh cached analytics', width='stretch'):
             cached_read.clear()
         st.caption('Clears cached data for the next read. Prior chat answers retain their original timestamps.')
         with st.expander('Connection diagnostics'):

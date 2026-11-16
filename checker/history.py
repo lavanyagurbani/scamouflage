@@ -44,6 +44,9 @@ def read_index(path, modified):
 def lookup(url, path=INDEX):
     try:
         path = Path(path)
+        if path == INDEX and not path.exists():
+            from checker.private_assets import ensure
+            path = ensure('history')
         exact, normalized = read_index(str(path), path.stat().st_mtime_ns)
         if digest(url) in exact:
             return 'Exact historical URL match'

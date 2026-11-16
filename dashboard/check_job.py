@@ -7,6 +7,14 @@ def render(project=None):
     st.caption('URL indicators, historical snapshot matches and job-content classification are separate checks.')
     st.info('Automatic extraction was unavailable. Paste the job description below to continue.')
     st.caption('Automatic page retrieval is disabled for SSRF safety. No submitted website is contacted. Manual text is not verified against the URL.')
+    from checker.private_assets import ensure, AssetError, configuration
+    if configuration():
+        with st.spinner('Preparing verified private checker assets...'):
+            for kind in ('model', 'history'):
+                try:
+                    ensure(kind)
+                except AssetError:
+                    st.warning('Private ' + kind + ' asset unavailable. Check artifact settings and token access.')
     with st.form('job-link-check'):
         url = st.text_input('Job posting URL', max_chars=8192, placeholder='https://company.example/careers/job')
         title = st.text_input('Manual job title (optional)', max_chars=500)
