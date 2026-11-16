@@ -93,3 +93,8 @@ A previously exposed service-account key should be treated as compromised and
 rotated through a separate approved change. No new key is created and no existing
 key is disabled, revoked or replaced by this deployment. Rotation requires separate
 explicit approval and secure Cloud-secret replacement followed by verification.
+
+## Deployment status
+
+All seven migration stages completed. API and hosted checks passed both before and
+after the analytics-dataset reader grant was removed. See [the stage results](aggregate-deployment-results.md).

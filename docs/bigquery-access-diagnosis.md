@@ -42,3 +42,10 @@ See [the current access chain, strict identity policy and migration gates](aggre
 Existing staging views remain unauthorized, and the old analytics dataset grant
 is retained until hosted verification passes. No billing, API enablement, raw-table
 role, credential rotation or deletion is part of the migration.
+
+## Applied and verified
+
+The revised direct-raw aggregate-only design was applied and verified through the
+dashboard identity and actual hosted UI. The old analytics reader grant was removed
+only after hosted verification passed, and all checks passed again afterward.
+See [the final deployment results](aggregate-deployment-results.md).
