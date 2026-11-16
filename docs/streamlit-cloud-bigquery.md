@@ -114,3 +114,7 @@ Validation for this change: 16 focused auth tests passed; the full suite discove
 passed in the existing isolated Python 3.10.9 environment. The hosted runtime should
 remain Python 3.11; this change does not alter it or scikit-learn 1.6.1. No hosted
 credentials, IAM changes or real BigQuery queries were used during these tests.
+
+For the confirmed raw-dependency denial, the user selected an aggregate-only
+boundary rather than direct raw-table grants. See the [diagnosis and approved
+access plan](bigquery-access-diagnosis.md); it is not yet applied in Cloud.
