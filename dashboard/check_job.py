@@ -5,12 +5,12 @@ from checker.assessment import assess
 
 def render(project=None):
     st.caption('URL indicators, historical snapshot matches and job-content classification are separate checks.')
-    st.info('Automatic extraction was unavailable. Paste the job description below to continue.')
+    st.info('Paste the job description to enable job-content analysis. URL indicators can be checked on their own.')
     st.caption('Automatic page retrieval is disabled for SSRF safety. No submitted website is contacted. Manual text is not verified against the URL.')
     from checker.private_assets import ensure, AssetError, configuration
     from checker.diagnostics import BUILD, inspect
-    st.caption('Checker build: ' + BUILD + ' | credential probe v1')
     with st.expander('Private checker diagnostics'):
+        st.caption('Checker build: ' + BUILD + ' | credential probe v1')
         if st.button('Verify private checker setup'):
             st.session_state.pop('job_scan', None)
             with st.spinner('Checking private repository access and pinned assets...'):
@@ -29,9 +29,9 @@ def render(project=None):
                 except AssetError as exc:
                     st.warning('Private ' + kind + ' asset unavailable (' + getattr(exc, 'code', 'unavailable') + '). Check artifact settings and token access.')
     with st.form('job-link-check'):
-        url = st.text_input('Job posting URL', max_chars=8192, placeholder='https://company.example/careers/job')
+        url = st.text_input('Job posting URL', max_chars=8192, placeholder='https://company.example/careers/job', help='HTTP(S) only. No website is fetched; this checks the URL you enter.')
         title = st.text_input('Manual job title (optional)', max_chars=500)
-        description = st.text_area('Manual job description (at least 40 words for ML analysis)', max_chars=100000, height=220)
+        description = st.text_area('Manual job description (at least 40 words for ML analysis)', max_chars=100000, height=220, help='Use at least 40 words of English job content. The classifier score is advisory and uncalibrated.')
         submitted = st.form_submit_button('Analyze Job Link')
     if submitted:
         st.session_state.pop('job_scan', None)

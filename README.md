@@ -274,3 +274,5 @@ Scamouflage is an analytics and data engineering demonstration with a baseline M
 Its primary objective is to demonstrate how data from multiple sources can be ingested, transformed, orchestrated, and explored through a cloud-based analytics workflow.
 
 Private Cloud checker artifact provisioning and rebuild instructions: [deployment guide](docs/private-checker-deployment.md).
+
+For presentation preparation, see the [demo guide and viva questions](docs/demo-guide.md).

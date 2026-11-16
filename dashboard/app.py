@@ -255,7 +255,7 @@ def pipeline_status(project):
                 st.caption(eyebrow.upper())
                 st.markdown('#### ' + title)
                 st.write(description)
-    st.caption('Analytics reads existing aggregate views through ADC. Check Job Link separately uses local historical evidence and a job-content model; it does not retrieve websites or provide live threat intelligence.')
+    st.caption('Analytics reads authorized aggregate views using Cloud service-account credentials or local ADC. Check Job Link separately uses local historical evidence and a job-content model; it does not retrieve websites or provide live threat intelligence.')
 
 
 def main():
@@ -299,7 +299,7 @@ def main():
     st.divider()
     project = None
     try:
-        if page != 'Check Job Link':
+        if page not in ('Check Job Link', 'Pipeline Status'):
             project = resolve_project()
         {'Check Job Link': check_job, 'Overview': overview, 'Job Fraud Analytics': jobs, 'Phishing Intelligence': phishing,
          'Ask Scamouflage': conversation, 'Pipeline Status': pipeline_status}[page](project)

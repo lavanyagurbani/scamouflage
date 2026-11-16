@@ -1,5 +1,6 @@
 """Pinned private GitHub assets. No pickle loading or public download fallback."""
 import hashlib
+from http.client import HTTPException
 import json
 import os
 from pathlib import Path
@@ -39,7 +40,7 @@ def configuration():
         return {}
 
 
-def download(repository, asset_id, token):
+def _download(repository, asset_id, token):
     """Follow GitHub's signed redirect without forwarding Authorization."""
     opener = build_opener(NoRedirect())
     url = f'https://api.github.com/repos/{repository}/releases/assets/{asset_id}'
@@ -61,6 +62,20 @@ def download(repository, asset_id, token):
     if len(payload) > LIMIT:
         raise AssetError('size_limit')
     return payload
+
+
+def download(repository, asset_id, token):
+    try:
+        return _download(repository, asset_id, token)
+    except AssetError:
+        raise
+    except HTTPError:
+        # Redirect-target failures are downloads, not local cache permissions.
+        raise AssetError('download_failed') from None
+    except (URLError, OSError, HTTPException):
+        raise AssetError('network_error') from None
+    except Exception:
+        raise AssetError('download_failed') from None
 
 
 def ensure(kind, config=None, root=ROOT):

@@ -3,6 +3,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 from checker.urls import normalize
@@ -38,6 +39,13 @@ def build(source, output):
 @lru_cache(maxsize=4)
 def read_index(path, modified):
     data = json.loads(Path(path).read_text(encoding='utf-8'))
+    if not isinstance(data, dict):
+        raise ValueError('Invalid historical hash index schema.')
+    for key in ('exact', 'normalized'):
+        values = data[key]
+        if (not isinstance(values, list) or len(values) > 100000
+                or any(not isinstance(value, str) or re.fullmatch('[0-9a-f]{64}', value) is None for value in values)):
+            raise ValueError('Invalid historical hash index schema.')
     return set(data['exact']), set(data['normalized'])
 
 
