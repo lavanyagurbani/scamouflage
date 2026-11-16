@@ -24,7 +24,11 @@ def predict(title, description, path=MODEL):
             from checker.private_assets import ensure
             from checker.portable import read, infer
             provisioned = ensure('model')
-            return infer(text, read(provisioned))
+            try:
+                return infer(text, read(provisioned))
+            except Exception:
+                return {'status': 'Unavailable', 'diagnostic_code': 'model_loading_failed',
+                        'reason': 'Verified private model could not be loaded or evaluated.'}
         artifact = load_model(str(path), path.stat().st_mtime_ns)
         pipeline = artifact['pipeline']
         vector = pipeline['tfidf'].transform([text])

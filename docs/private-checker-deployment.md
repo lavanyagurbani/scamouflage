@@ -68,3 +68,31 @@ without publishing the matching URL. Hosted success requires opening Check Job L
 submitting 40+ words, confirming an analyzed model result and an available historical
 lookup, then repeating after a Cloud reboot. Local tests alone do not verify Cloud.
 GitHub API/network availability, token expiration, and Cloud secrets are dependencies.
+
+
+## Safe production diagnosis
+
+Open Check Job Link > Private checker diagnostics > Verify private checker setup.
+The report shows the actual Git commit when available, a build marker, configuration
+match booleans and allowlisted stage codes. It never includes the token, request
+headers, response bodies, download URLs, vocabulary or historical records.
+
+- `missing_settings`: the listed required keys are absent/empty.
+- `repository_not_accessible` plus HTTP 404: the Cloud token cannot see the expected
+  private repository, or that repository is absent. Check existence independently;
+  GitHub intentionally returns 404 for inaccessible private repositories.
+- Repository metadata `ok` but `release_not_accessible`: check Contents read-only
+  permission and the pinned release tag; the release may be absent or inaccessible.
+- `asset_id_not_in_release`: the configured ID/name does not belong to the pinned tag.
+- `configured_checksum_mismatch`: Cloud's checksum differs from release metadata.
+- `checksum_mismatch`: downloaded bytes differ from the pinned digest; never load them.
+- `network_error`, `download_failed`, `redirect_rejected`: transport failed before install.
+- `cache_error`: local filesystem installation failed.
+- `model_loading_failed` / `history_loading_failed`: verified bytes could not be read
+  by the runtime reader. `verified_and_loaded` confirms the exact provisioned path loaded.
+
+No failures are cached by lru_cache; failed calls raise and are not memoized. The
+page's job_scan session value can retain an older displayed assessment. Pressing the
+verification button clears that prior assessment, and Analyze Job Link recomputes it.
+This does not fix an upstream HTTP authorization failure; do not confuse it with one.
+Only share the safe diagnostic JSON, never the Secrets editor or unreviewed Cloud logs.

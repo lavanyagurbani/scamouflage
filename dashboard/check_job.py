@@ -8,6 +8,15 @@ def render(project=None):
     st.info('Automatic extraction was unavailable. Paste the job description below to continue.')
     st.caption('Automatic page retrieval is disabled for SSRF safety. No submitted website is contacted. Manual text is not verified against the URL.')
     from checker.private_assets import ensure, AssetError, configuration
+    from checker.diagnostics import BUILD, inspect
+    st.caption('Checker build: ' + BUILD)
+    with st.expander('Private checker diagnostics'):
+        if st.button('Verify private checker setup'):
+            st.session_state.pop('job_scan', None)
+            with st.spinner('Checking private repository access and pinned assets...'):
+                st.session_state['checker_diagnostics'] = inspect()
+        if 'checker_diagnostics' in st.session_state:
+            st.json(st.session_state['checker_diagnostics'])
     if configuration():
         with st.spinner('Preparing verified private checker assets...'):
             for kind in ('model', 'history'):
