@@ -34,6 +34,22 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(result['result'],'release_not_accessible')
         self.assertNotIn('PRIVATE_TEST_VALUE',json.dumps(result))
 
+    def test_cloud_token_identity_and_scope_are_booleans_only(self):
+        replies=[('github_http_404',None),('ok',{'login':'lavanyagurbani','private_email':'DO_NOT_EXPOSE'}),('ok',[{'full_name':'private-other-name'}])]
+        with patch.object(diagnostics,'metadata',side_effect=replies):
+            result=diagnostics.inspect(self.config())
+        self.assertTrue(result['credential_account_matches_expected'])
+        self.assertFalse(result['target_repository_visible_to_token'])
+        self.assertNotIn('private-other-name',json.dumps(result))
+        self.assertNotIn('DO_NOT_EXPOSE',json.dumps(result))
+        self.assertNotIn('PRIVATE_TEST_VALUE',json.dumps(result))
+
+    def test_invalid_cloud_credential_distinguished(self):
+        with patch.object(diagnostics,'metadata',side_effect=[('github_http_404',None),('github_http_401',None)]):
+            result=diagnostics.inspect(self.config())
+        self.assertEqual(result['checks']['credential_identity'],'github_http_401')
+        self.assertNotIn('credential_account_matches_expected',result)
+
     def test_wrong_id_and_checksum_do_not_download(self):
         config=self.config(); config['model_asset_id']=999
         with patch.object(diagnostics,'metadata',side_effect=[('ok',{'private':True}),('ok',self.release())]), patch.object(private_assets,'ensure',side_effect=private_assets.AssetError('checksum_mismatch')):

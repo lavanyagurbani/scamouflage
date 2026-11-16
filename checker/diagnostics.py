@@ -7,7 +7,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, build_opener
 from checker import private_assets
 
-BUILD = 'private-checker-diagnostics-v3'
+BUILD = 'private-checker-diagnostics-v4'
 REPOSITORY = 'lavanyagurbani/scamouflage-artifacts'
 ASSETS = {'model': (756118835, 'job-model.json'), 'history': (756118991, 'phishing-index.json')}
 FIELDS = ('repository', 'version', 'model_asset_id', 'model_sha256',
@@ -24,9 +24,13 @@ def revision():
         return 'unavailable'
 
 
-def metadata(path, token):
+def metadata(path, token, account_endpoint=False):
     try:
-        request = Request('https://api.github.com/repos/' + REPOSITORY + path,
+        if account_endpoint and path not in ('/user', '/user/repos?visibility=private&affiliation=owner&per_page=100'):
+            return 'metadata_endpoint_rejected', None
+        url = ('https://api.github.com' + path if account_endpoint
+               else 'https://api.github.com/repos/' + REPOSITORY + path)
+        request = Request(url,
             headers={'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json',
                      'User-Agent': 'Scamouflage-private-diagnostics'})
         # No redirects for authenticated metadata requests.
@@ -64,6 +68,18 @@ def inspect(config=None):
         report['checks']['repository_metadata'] = code
         if code != 'ok':
             report['result'] = 'repository_not_accessible' if code == 'github_http_404' else code
+            token = config['token']
+            report['credential_format_valid'] = (isinstance(token, str) and token.startswith('github_pat_')
+                and re.fullmatch(r'[A-Za-z0-9_]{30,}', token) is not None)
+            identity_code, identity = metadata('/user', token, account_endpoint=True)
+            report['checks']['credential_identity'] = identity_code
+            if identity_code == 'ok' and isinstance(identity, dict):
+                report['credential_account_matches_expected'] = identity.get('login', '').lower() == 'lavanyagurbani'
+                visible_code, visible = metadata('/user/repos?visibility=private&affiliation=owner&per_page=100', token, account_endpoint=True)
+                report['checks']['token_visible_repositories'] = visible_code
+                if visible_code == 'ok' and isinstance(visible, list):
+                    report['target_repository_visible_to_token'] = any(
+                        item.get('full_name', '').lower() == REPOSITORY for item in visible if isinstance(item, dict))
             return report
         report['repository_private'] = repo.get('private') is True
         if not report['repository_private']:
