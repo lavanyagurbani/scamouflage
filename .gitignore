@@ -51,3 +51,10 @@ target/
 dbt_packages/
 .DS_Store
 Thumbs.db
+artifacts/checker/
+
+# Generated model binaries remain local, regardless of output directory.
+*.joblib
+*.pkl
+*.pickle
+*.onnx

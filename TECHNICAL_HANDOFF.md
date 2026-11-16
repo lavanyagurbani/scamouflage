@@ -3,10 +3,13 @@
 Audit: **15 November 2026, Asia/Calcutta**. Submission: **16–17 November 2026**.
 No cloud jobs, containers, syncs or package installations were run during this audit.
 No commit, push, publication, upload or deletion of user data occurred during that audit.
-Subsequently, two audited commits were published to a PRIVATE repository and a full
-external Git bundle backup was verified. Current-file privacy cleanup is now in
-progress; public publishing and history sanitization are not complete. This cleanup
-does not change Git history or the repository's private visibility.
+## Checker extension (16 November 2026)
+
+The local dashboard now includes Check Job Link: real TF-IDF/logistic-regression
+job-content inference, URL heuristics and hashed historical phishing lookup.
+See [setup, evaluation, limitations and demo](docs/job-checker.md). Automatic website
+retrieval and optional cloud scan-history storage are not implemented. Historical
+audit statements below describe the earlier pipeline verification.
 
 ## Architecture and verified evidence
 
@@ -22,7 +25,7 @@ Airflow separately runs: ingest_raw_data -> dbt_run -> dbt_test
 Airbyte uses real standalone connector protocol, not a full Airbyte platform/UI.
 It has a local runner ID, not an Airbyte platform job ID. Airflow does **not** invoke
 the Airbyte sync/bridge. The dashboard queries the existing analytics marts, not the
-proof tables. No ML classifier or LLM API is implemented.
+proof tables. The new checker uses a separate local ML classifier; no LLM API is implemented.
 
 Project **`scamouflage`**, datasets **`scamouflage_raw` / `scamouflage_analytics`**,
 location **`US`**, BigQuery Sandbox without billing. Authentication is local ADC.

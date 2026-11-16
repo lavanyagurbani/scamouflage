@@ -7,6 +7,7 @@ import streamlit as st
 
 from dashboard.bigquery_reader import DashboardError, read_query, validate_project
 from dashboard.queries import DIMENSIONS, PROJECT, QuerySpec, SUPPORTED_QUESTIONS, match_question
+from dashboard.check_job import render as check_job
 from dashboard.presentation import (PAGES, PAGE_DESCRIPTIONS, THEME_KEY, chart_spec,
                                     selected_theme, stylesheet, tokens)
 
@@ -246,7 +247,7 @@ def pipeline_status(project):
                 st.caption(eyebrow.upper())
                 st.markdown('#### ' + title)
                 st.write(description)
-    st.caption('The dashboard reads existing aggregate analytics views through ADC. No streaming ingestion, prediction, or live URL checking.')
+    st.caption('Analytics reads existing aggregate views through ADC. Check Job Link separately uses local historical evidence and a job-content model; it does not retrieve websites or provide live threat intelligence.')
 
 
 def main():
@@ -277,8 +278,9 @@ def main():
     st.divider()
     project = os.environ.get('GCP_PROJECT_ID', '')
     try:
-        validate_project(project)
-        {'Overview': overview, 'Job Fraud Analytics': jobs, 'Phishing Intelligence': phishing,
+        if page != 'Check Job Link':
+            validate_project(project)
+        {'Check Job Link': check_job, 'Overview': overview, 'Job Fraud Analytics': jobs, 'Phishing Intelligence': phishing,
          'Ask Scamouflage': conversation, 'Pipeline Status': pipeline_status}[page](project)
     except DashboardError as exc:
         st.error(str(exc))

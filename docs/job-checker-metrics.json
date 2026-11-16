@@ -1,0 +1,40 @@
+{
+  "version": "job-tfidf-v1",
+  "trained_at": "2026-11-16T14:15:10.845926+00:00",
+  "source_sha256": "59253295129d8b6a27607f9904f7d4ddf4dbb0ee35e079c7eb51b58b5e62bf60",
+  "sklearn_version": "1.6.1",
+  "seed": 42,
+  "threshold": 0.5,
+  "fields": [
+    "title",
+    "description"
+  ],
+  "source_rows": 17880,
+  "source_class_counts": {
+    "0": 17014,
+    "1": 866
+  },
+  "conflicting_rows_removed": 0,
+  "duplicate_texts_removed": 2296,
+  "short_texts_removed": 854,
+  "deduplicated_eligible_rows": 14730,
+  "train_rows": 11784,
+  "test_rows": 2946,
+  "train_fraud": 491,
+  "test_fraud": 123,
+  "precision": 0.6370370370370371,
+  "recall": 0.6991869918699187,
+  "f1": 0.6666666666666666,
+  "pr_auc_average_precision": 0.7417309103534042,
+  "confusion_matrix_labels_0_1": [
+    [
+      2774,
+      49
+    ],
+    [
+      37,
+      86
+    ]
+  ],
+  "limitations": "Exact normalized duplicates removed before stratified split. Near duplicates, company overlap and temporal leakage remain possible. English historical data; uncalibrated scores. Fixed 0.5 threshold, not tuned on held-out test."
+}

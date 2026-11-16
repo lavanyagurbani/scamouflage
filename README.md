@@ -1,6 +1,6 @@
 # Scamouflage — Job Fraud and Phishing Analytics Pipeline
 
-Scamouflage is a data engineering project designed to process and analyze fraudulent job postings and phishing reports.
+Scamouflage is a data engineering project designed to process and analyze fraudulent job postings and phishing reports, with an advisory job-link risk checker.
 
 The project combines data ingestion, cloud storage, SQL transformations, workflow orchestration, and an interactive analytics dashboard. It uses Apache Airflow, Airbyte, Google BigQuery, dbt, and Streamlit to demonstrate a practical data engineering workflow.
 
@@ -49,14 +49,27 @@ The project combines data ingestion, cloud storage, SQL transformations, workflo
 - Provides Light and Dark themes.
 - Displays key metrics for job postings, fraudulent postings, fraud rate, and phishing reports.
 - Includes visualizations of job fraud patterns and phishing activity.
-- Provides five navigation sections:
+- Provides six navigation sections:
   - Overview
+  - Check Job Link
   - Job Fraud Analytics
   - Phishing Intelligence
   - Ask Scamouflage
   - Pipeline Status
 
-### 6. Guided Conversational BI
+### 6. Check Job Link
+
+- Validates a submitted URL and reports transparent URL heuristic indicators.
+- Checks exact and conservatively normalized matches against a locally built historical phishing index.
+- Classifies **manually pasted job title and description** with a real TF-IDF/logistic-regression model trained on the labelled job snapshot.
+- Keeps URL indicators, historical matches and ML evidence separate; scores are uncalibrated and advisory.
+- Does **not** scrape websites, provide live phishing intelligence or save scans to BigQuery.
+- Works without BigQuery credentials, with explicit unavailable states when local artifacts are missing.
+
+See [checker setup, actual evaluation, limitations and demo](docs/job-checker.md) and
+[global theme verification](docs/dashboard-accessibility.md).
+
+### 7. Guided Conversational BI
 
 - Allows users to explore data through predefined analytical questions.
 - Provides answers using supported BigQuery-backed queries.
@@ -74,6 +87,7 @@ The project combines data ingestion, cloud storage, SQL transformations, workflo
 | Cloud Data Warehouse | Google BigQuery |
 | Data Transformation | dbt Core, dbt-bigquery, SQL |
 | Dashboard | Streamlit, Python |
+| Job-content classification | scikit-learn, TF-IDF, logistic regression |
 | Data Sources | Fake Job Postings Dataset, PhishTank Reports |
 | Version Control | Git, GitHub |
 
@@ -89,13 +103,13 @@ scamouflage/
 ├── data/                 # Local dataset directory (datasets excluded from Git)
 ├── dbt/                  # dbt project and SQL models
 ├── docs/                 # Technical documentation
-├── ingestion/            # BigQuery ingestion scripts
+├── scripts/              # BigQuery ingestion and audit scripts
 ├── tests/                # Offline tests
 ├── README.md             # Project overview and setup
 └── TECHNICAL_HANDOFF.md  # Technical handoff documentation
 ```
 
-*Directory names should be checked against the current repository before finalizing this section.*
+Additional folders: `checker/` contains training, inference, URL checks and historical lookup; `.streamlit/` contains native theme configuration.
 
 ---
 
@@ -132,7 +146,29 @@ $env:GCP_PROJECT_ID = "scamouflage"
 
 The project requires access to the appropriate BigQuery datasets and tables. Cloning the repository does not automatically provide access to the existing cloud resources.
 
-### Step 3: Set Up Dependencies
+### Step 3: Set Up Dependencies and Local Checker Artifacts
+
+Use Python 3.10 or newer in a separate environment. From the repository root:
+
+```powershell
+python -m venv .venv-checker
+.\.venv-checker\Scripts\python.exe -m pip install -r requirements-dev.txt
+```
+
+For classifier and phishing matching, obtain the real datasets following
+[data preparation](docs/data-preparation.md), place `fake_job_postings.csv` and
+`phishing_reports.csv` in `data/`, then build the local artifacts:
+
+```powershell
+.\.venv-checker\Scripts\python.exe -m checker.train
+.\.venv-checker\Scripts\python.exe -m checker.history
+```
+
+Datasets, model binaries and lookup indexes are deliberately excluded from Git.
+A fresh clone can run offline tests and the dashboard without them; ML and history
+checks show unavailable until artifacts are built. Two real-model integration
+tests skip explicitly when the model is absent. No substitute dataset is downloaded.
+
 
 Follow the component-specific instructions in the `airflow/`, `airbyte/`, and `dashboard/` documentation.
 
@@ -144,7 +180,7 @@ From the project root, with the dashboard dependencies installed:
 
 ```powershell
 $env:GCP_PROJECT_ID = "scamouflage"
-python -m streamlit run dashboard/app.py --server.address 127.0.0.1 --browser.gatherUsageStats false
+.\.venv-checker\Scripts\python.exe -m streamlit run dashboard/app.py --server.address 127.0.0.1 --browser.gatherUsageStats false
 ```
 
 Open:
@@ -213,12 +249,22 @@ The project has been validated through:
 - **Four passing dbt tests**.
 - Successful execution of the three-task Airflow DAG.
 - Verified Airbyte full synchronization and BigQuery proof-table batch loads.
-- **19 passing dashboard tests** following the final UI updates.
+- **22 passing dashboard-focused tests** following global theme updates.
+- Latest implementation full suite: **64 passed** with local trained artifacts; Airbyte offline suites: **27 passed**.
+- Held-out job-content evaluation: precision **0.6370**, recall **0.6992**, F1 **0.6667**, average precision **0.7417** on **2,946** postings.
+- Release-specific validation is recorded in [release validation](docs/public-release-validation.md).
+
+Run offline tests from a fresh clone after installing `requirements-dev.txt`:
+
+```powershell
+.\.venv-checker\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv-checker\Scripts\python.exe -m unittest discover -s airbyte -p 'test*offline.py' -v
+```
 
 ---
 
 ## Project Scope
 
-Scamouflage is an analytics and data engineering demonstration. It does not perform real-time fraud detection, machine learning-based prediction, or unrestricted natural-language-to-SQL generation.
+Scamouflage is an analytics and data engineering demonstration with a baseline ML job-content classifier. It does not perform automatic website scraping, live threat intelligence, guaranteed fraud detection, or unrestricted natural-language-to-SQL generation. Automatic extraction is disabled for SSRF safety; users supply job text manually.
 
 Its primary objective is to demonstrate how data from multiple sources can be ingested, transformed, orchestrated, and explored through a cloud-based analytics workflow.

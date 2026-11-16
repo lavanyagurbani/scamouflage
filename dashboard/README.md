@@ -1,7 +1,10 @@
 # scamouflage dashboard
 
 Local Streamlit analytics over existing BigQuery views. No LLM, table writes, raw
-phishing URLs, or live URL checks. The user has verified the live dashboard and
+phishing URLs, or live website retrieval. **Check Job Link** adds URL heuristics,
+local phishing snapshot matching and classification of manually supplied content.
+Use [the checker environment and setup](../docs/job-checker.md) for this page.
+The user has verified the historical dashboard and
 separate Airbyte/Airflow paths; see [the final handoff](../TECHNICAL_HANDOFF.md).
 
 ## Windows PowerShell

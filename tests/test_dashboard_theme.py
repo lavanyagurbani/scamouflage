@@ -38,8 +38,8 @@ class ThemeTests(unittest.TestCase):
         self.assertEqual(selected_theme(state), 'Light')
 
     def test_exact_palettes_and_accessible_text_contrast(self):
-        expected = {'Light': ['#F8F8FA', '#FFFFFF', '#E9E7ED', '#24202C', '#62429A'],
-                    'Dark': ['#111116', '#1C1C24', '#303039', '#F4F2F8', '#B9A0F5']}
+        expected = {'Light': ['#F8F8FA', '#FFFFFF', '#85808D', '#24202C', '#62429A'],
+                    'Dark': ['#111116', '#1C1C24', '#85808D', '#F4F2F8', '#B9A0F5']}
         for mode in THEMES:
             p = tokens(mode)
             self.assertEqual([p[k] for k in ['background', 'surface', 'border', 'text', 'accent']], expected[mode])
@@ -50,6 +50,51 @@ class ThemeTests(unittest.TestCase):
         altered = tokens('Light')
         altered['text'] = 'changed'
         self.assertNotEqual(tokens('Light')['text'], 'changed')
+
+    def test_semantic_tokens_meet_text_and_control_contrast(self):
+        def contrast(a, b):
+            light, dark = sorted([luminance(a), luminance(b)], reverse=True)
+            return (light + .05) / (dark + .05)
+        for mode in THEMES:
+            p = tokens(mode)
+            for foreground in ('text', 'muted', 'accent', 'success', 'warning', 'error', 'disabled'):
+                for background in ('background', 'surface', 'tint'):
+                    self.assertGreaterEqual(contrast(p[foreground], p[background]), 4.5,
+                                            (mode, foreground, background))
+            for foreground in ('input_text', 'placeholder'):
+                self.assertGreaterEqual(contrast(p[foreground], p['input']), 4.5)
+            self.assertGreaterEqual(contrast(p['on_accent'], p['accent']), 4.5)
+            for surface in ('background', 'surface', 'input'):
+                self.assertGreaterEqual(contrast(p['border'], p[surface]), 3, (mode, surface))
+
+    def test_native_config_matches_palettes_and_readable_canvas_headers(self):
+        import toml
+        from streamlit import config
+        theme = toml.loads((ROOT / '.streamlit/config.toml').read_text())['theme']
+        mapping = {'primaryColor': 'accent', 'backgroundColor': 'background',
+                   'secondaryBackgroundColor': 'surface', 'textColor': 'text', 'borderColor': 'border'}
+        for mode in THEMES:
+            for native, token in mapping.items():
+                self.assertEqual(theme[mode.lower()][native], tokens(mode)[token])
+                self.assertEqual(config.get_option('theme.' + mode.lower() + '.' + native), tokens(mode)[token])
+        fg, bg = theme['dataframeHeaderTextColor'], theme['dataframeHeaderBackgroundColor']
+        self.assertGreaterEqual((luminance(fg) + .05) / (luminance(bg) + .05), 4.5)
+        self.assertTrue(theme['showWidgetBorder'])
+
+    def test_control_leaves_portals_and_states_have_shared_rules(self):
+        for mode in THEMES:
+            css = stylesheet(mode)
+            for selector in ('[data-baseweb="base-input"]', 'textarea', '::placeholder',
+                             '[role="option"]', '[data-baseweb="calendar"]',
+                             '[data-testid="stChatInput"]', '[data-testid="stAlert"]',
+                             '[data-testid="stAlertContainer"]', '[data-testid="stTextAreaRootElement"]',
+                             '[role="tab"]', ':disabled', ':focus-visible',
+                             '[data-testid="stSpinner"]', '#vg-tooltip-element'):
+                self.assertIn(selector, css)
+            self.assertIn('background-color: var(--pf-input) !important', css)
+            self.assertNotIn('$', css)
+            self.assertNotIn('.css-', css)
+            self.assertNotIn('.st-emotion-cache-', css)
 
     def test_scoped_css_and_chart_specs_follow_each_theme(self):
         for mode in THEMES:
@@ -127,7 +172,7 @@ class RenderingTests(unittest.TestCase):
                     self.app.sidebar.radio(key='pearl_navigation').set_value(page).run()
                     self.assert_no_errors()
                     self.assertEqual(self.app.session_state[THEME_KEY], mode)
-                    if page in ('Pipeline Status', 'Ask Scamouflage'):
+                    if page in ('Pipeline Status', 'Ask Scamouflage', 'Check Job Link'):
                         self.assertEqual(self.mock_read.call_count, before)
 
     def test_guided_chat_and_unsupported_input_survive_theme_rerun(self):

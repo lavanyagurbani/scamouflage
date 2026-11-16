@@ -1,0 +1,31 @@
+# Native defaults cover canvas dataframe headers and browser-managed UI.
+# The application radio applies the session palette through dashboard/theme.css.
+[theme]
+base = "light"
+font = "sans-serif"
+baseFontSize = 16
+showWidgetBorder = true
+showSidebarBorder = true
+dataframeHeaderBackgroundColor = "#45404F"
+dataframeHeaderTextColor = "#FFFFFF"
+dataframeBorderColor = "#85808D"
+
+[theme.light]
+primaryColor = "#62429A"
+backgroundColor = "#F8F8FA"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#24202C"
+borderColor = "#85808D"
+linkColor = "#62429A"
+codeBackgroundColor = "#F0ECF7"
+codeTextColor = "#24202C"
+
+[theme.dark]
+primaryColor = "#B9A0F5"
+backgroundColor = "#111116"
+secondaryBackgroundColor = "#1C1C24"
+textColor = "#F4F2F8"
+borderColor = "#85808D"
+linkColor = "#B9A0F5"
+codeBackgroundColor = "#282333"
+codeTextColor = "#F4F2F8"
