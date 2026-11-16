@@ -4,7 +4,7 @@
 
 Scamouflage combines historical job-fraud and phishing analytics with an advisory job-link checker. It demonstrates ingestion, orchestration, SQL transformation, ML inference and a secure dashboard. It cannot certify an employer or URL as safe.
 
-At preparation, hosted analytics work but the private-artifact credential is rejected by GitHub with HTTP 401. Until the Cloud diagnostic reports verified assets and an actual analyzed result, describe hosted ML and historical lookup as blocked. A successful local prediction is not hosted verification. See [verification evidence](demo-verification.md) for the final recorded checks.
+Hosted analytics and Check Job Link were verified on 17 November 2026. Both private assets passed the hosted checksum/loading checks. Synthetic job text produced a genuine model score of 0.185, and a synthetic URL produced a working historical no-match result. No genuine private phishing URL was submitted to the hosted app; a positive historical match was verified locally only. Fresh-server restart recovery is not yet certified. See [verification evidence](demo-verification.md).
 
 ## Architecture and stack
 
@@ -98,7 +98,7 @@ If Cloud authentication is still blocked, add: “The private artifact credentia
 | What are the model limitations? | English historical data, class imbalance, possible near-duplicate/company/temporal leakage, no probability calibration, and a fixed 0.5 threshold. |
 | What evaluation did you obtain? | The recorded held-out evaluation reports precision 0.637, recall 0.699, F1 0.667 and average precision 0.742. It does not establish present-day generalization. |
 | Why not put artifacts in public GitHub? | Derived weights and hashes may disclose training or membership information; they are private and checksum-verified. |
-| Why is the hosted checker unavailable? | GitHub rejects its current credential. Permissions shown in GitHub do not prove that the saved credential value is active. |
+| What caused the earlier hosted outage? | The old token was rejected with 401. Its replacement authenticated but lacked access to the private artifact repository; correcting the selected repository resolved that 404. Both components then passed hosted verification. |
 | Is Pipeline Status a monitoring system? | No. It presents recorded implementation evidence. |
 
 ## Verification boundaries
