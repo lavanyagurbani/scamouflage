@@ -83,6 +83,15 @@ class PrivateAssetsTests(unittest.TestCase):
                 private_assets.ensure('model', self.config(b'{}'), directory)
             self.assertEqual(caught.exception.code, 'github_http_404')
 
+    def test_render_tolerates_error_from_previously_loaded_module(self):
+        from streamlit.testing.v1 import AppTest
+        legacy = private_assets.AssetError()
+        del legacy.code
+        with patch.object(private_assets, 'configuration', return_value={'configured': True}), patch.object(private_assets, 'ensure', side_effect=legacy):
+            app = AppTest.from_string('from dashboard.check_job import render; render()', default_timeout=20).run()
+        self.assertFalse(app.exception)
+        self.assertEqual(len(app.warning), 2)
+
     def test_nonfinite_and_incompatible_model_rejected(self):
         with self.assertRaises(ValueError):
             portable.validate({'format':'pickle'})

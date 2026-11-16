@@ -14,7 +14,7 @@ def render(project=None):
                 try:
                     ensure(kind)
                 except AssetError as exc:
-                    st.warning('Private ' + kind + ' asset unavailable (' + exc.code + '). Check artifact settings and token access.')
+                    st.warning('Private ' + kind + ' asset unavailable (' + getattr(exc, 'code', 'unavailable') + '). Check artifact settings and token access.')
     with st.form('job-link-check'):
         url = st.text_input('Job posting URL', max_chars=8192, placeholder='https://company.example/careers/job')
         title = st.text_input('Manual job title (optional)', max_chars=500)
