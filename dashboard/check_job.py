@@ -15,7 +15,7 @@ def render(project=None):
             st.session_state.pop('job_scan', None)
             with st.spinner('Checking private repository access and pinned assets...'):
                 report = inspect()
-                if report.get('result') == 'repository_not_accessible':
+                if report.get('result') in ('repository_not_accessible', 'github_http_401', 'github_http_403'):
                     from checker.credential_probe import inspect as inspect_credential
                     report.update(inspect_credential(configuration()))
                 st.session_state['checker_diagnostics'] = report
