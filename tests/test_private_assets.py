@@ -73,6 +73,16 @@ class PrivateAssetsTests(unittest.TestCase):
             with patch('checker.private_assets.ensure', return_value=index):
                 self.assertEqual(history.lookup(url),'Exact historical URL match')
 
+    def test_diagnostic_codes_never_include_arbitrary_error_text(self):
+        self.assertEqual(private_assets.AssetError('private-secret-fixture').code, 'unavailable')
+        with self.assertRaises(private_assets.AssetError) as caught:
+            private_assets.ensure('model', {})
+        self.assertEqual(caught.exception.code, 'missing_settings')
+        with tempfile.TemporaryDirectory() as directory, patch.object(private_assets, 'download', side_effect=private_assets.AssetError('github_http_404')):
+            with self.assertRaises(private_assets.AssetError) as caught:
+                private_assets.ensure('model', self.config(b'{}'), directory)
+            self.assertEqual(caught.exception.code, 'github_http_404')
+
     def test_nonfinite_and_incompatible_model_rejected(self):
         with self.assertRaises(ValueError):
             portable.validate({'format':'pickle'})

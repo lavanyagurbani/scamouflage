@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import tempfile
 import threading
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
@@ -16,7 +16,14 @@ LIMIT = 16 * 1024 * 1024
 
 
 class AssetError(ValueError):
-    pass
+    CODES = {'unavailable', 'missing_settings', 'invalid_settings', 'checksum_mismatch',
+             'invalid_json', 'network_error', 'cache_error', 'redirect_rejected', 'size_limit',
+             'github_http_401', 'github_http_403', 'github_http_404', 'github_http_429',
+             'download_failed'}
+
+    def __init__(self, code='unavailable'):
+        self.code = code if code in self.CODES else 'unavailable'
+        super().__init__('Private checker assets unavailable (' + self.code + ').')
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -42,17 +49,17 @@ def download(repository, asset_id, token):
         response = opener.open(Request(url, headers=headers), timeout=30)
     except HTTPError as exc:
         if exc.code != 302:
-            raise AssetError('Private artifact download failed.') from None
+            raise AssetError('github_http_' + str(exc.code) if exc.code in (401,403,404,429) else 'download_failed') from None
         target = exc.headers.get('Location', '')
         parsed = urlsplit(target)
         if (parsed.scheme != 'https' or parsed.hostname != 'release-assets.githubusercontent.com'
                 or parsed.username or parsed.password or parsed.port not in (None, 443)):
-            raise AssetError('Artifact redirect rejected.') from None
+            raise AssetError('redirect_rejected') from None
         response = opener.open(Request(target, headers={'User-Agent': headers['User-Agent']}), timeout=30)
     with response:
         payload = response.read(LIMIT + 1)
     if len(payload) > LIMIT:
-        raise AssetError('Artifact exceeds size limit.')
+        raise AssetError('size_limit')
     return payload
 
 
@@ -69,7 +76,7 @@ def ensure(kind, config=None, root=ROOT):
                 or not re.fullmatch(r'[A-Za-z0-9._-]{1,80}', version)
                 or not re.fullmatch(r'[0-9a-f]{64}', digest)
                 or not str(asset_id).isdigit() or not token):
-            raise AssetError('Invalid private artifact configuration.')
+            raise AssetError('invalid_settings')
         target = Path(root) / (kind + '-' + digest + '.json')
         with LOCK:
             if target.exists() and target.stat().st_size <= LIMIT:
@@ -77,8 +84,11 @@ def ensure(kind, config=None, root=ROOT):
                     return target
             data = download(repository, asset_id, token)
             if hashlib.sha256(data).hexdigest() != digest:
-                raise AssetError('Private artifact checksum mismatch.')
-            json.loads(data)  # All hosted artifacts must be non-executable JSON.
+                raise AssetError('checksum_mismatch')
+            try:
+                json.loads(data)  # All hosted artifacts must be non-executable JSON.
+            except (ValueError, UnicodeError):
+                raise AssetError('invalid_json') from None
             target.parent.mkdir(parents=True, exist_ok=True)
             temporary = None
             try:
@@ -90,6 +100,14 @@ def ensure(kind, config=None, root=ROOT):
                 if temporary is not None:
                     temporary.unlink(missing_ok=True)
             return target
+    except AssetError:
+        raise
+    except KeyError:
+        raise AssetError('missing_settings') from None
+    except URLError:
+        raise AssetError('network_error') from None
+    except OSError:
+        raise AssetError('cache_error') from None
     except Exception:
         # Never propagate signed download URLs, headers, tokens or HTTP bodies.
-        raise AssetError('Private checker assets unavailable; check secure artifact settings.') from None
+        raise AssetError('unavailable') from None
