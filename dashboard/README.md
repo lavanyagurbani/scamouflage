@@ -160,3 +160,33 @@ python -m streamlit run dashboard/app.py --server.address 127.0.0.1 --browser.ga
 The preview reads BigQuery; offline rendering tests do not. Review both themes and
 narrow-window layouts locally before submission. No cloud queries or browser
 visual review were performed for this redesign.
+
+## Streamlit Community Cloud
+
+Use repository `lavanyagurbani/scamouflage`, branch `main`, entrypoint
+`dashboard/app.py`. Community Cloud prioritizes the requirements file beside the
+entrypoint, so `dashboard/requirements.txt` declares the complete dashboard/checker
+runtime. `checker/requirements.txt` delegates to it without circular includes.
+See [Streamlit dependency selection](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies).
+
+The entrypoint adds its resolved repository root to Python's module search path
+before importing `dashboard` and `checker`; it does not depend on the current
+working directory or a deployment-specific `PYTHONPATH`.
+
+Never commit credentials or service-account keys. Existing BigQuery authentication
+and project configuration are still required for analytics; this import fix does
+not grant cloud resource access. Model binaries and the historical lookup index
+remain excluded from Git: the checker reports unavailable until local artifacts
+are supplied through an approved deployment process. Automatic scraping is disabled.
+
+Offline cloud-import regression tests:
+
+```powershell
+python -m unittest discover -s tests -p test_cloud_entrypoint.py -v
+```
+
+Import-fix validation: isolated entrypoint imports passed from repository root,
+entrypoint directory and an unrelated temporary directory; full suite **64 passed,
+2 real-model tests skipped** (66 discovered). A local headless Streamlit process
+returned HTTP 200 with `ok` from its health endpoint and was stopped afterward.
+Hosted redeployment was not directly inspected during these local checks.

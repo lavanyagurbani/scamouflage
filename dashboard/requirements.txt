@@ -1,3 +1,8 @@
 streamlit==1.65.0
 google-cloud-bigquery>=3,<4
 pandas>=2,<3
+# Full runtime dependencies: Community Cloud installs this entrypoint-local file.
+scikit-learn==1.6.1
+joblib>=1.4,<2
+tldextract==5.3.0
+Jinja2>=3.1,<4

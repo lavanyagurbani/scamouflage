@@ -1,6 +1,14 @@
 """Run from the repository root: python -m streamlit run dashboard/app.py"""
 from datetime import datetime, timedelta, timezone
 import os
+from pathlib import Path
+import sys
+
+# Streamlit may place only the entrypoint directory on sys.path. Resolve sibling
+# packages from this file, independently of the launch working directory.
+_PROJECT_ROOT = str(Path(__file__).resolve().parents[1])
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 
 import pandas as pd
 import streamlit as st
