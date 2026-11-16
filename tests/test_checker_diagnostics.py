@@ -81,3 +81,21 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(result['result'],'diagnostic_configuration_error')
         self.assertNotIn('PRIVATE_TEST_VALUE',json.dumps(result))
         self.assertNotIn('DO_NOT_EXPOSE',json.dumps(result))
+
+
+class CredentialProbeTests(unittest.TestCase):
+    def test_probe_returns_no_account_or_secret_values(self):
+        from checker import credential_probe
+        with patch.object(credential_probe, 'request', side_effect=[('ok', {'login':'lavanyagurbani','email':'DO_NOT_EXPOSE'}),('ok',[{'full_name':'private-name'}])]):
+            result=credential_probe.inspect({'token':'PRIVATE_TEST_VALUE'})
+        self.assertTrue(result['credential_account_matches_expected'])
+        self.assertFalse(result['target_repository_visible_to_token'])
+        for private in ('PRIVATE_TEST_VALUE','DO_NOT_EXPOSE','private-name'):
+            self.assertNotIn(private,json.dumps(result))
+
+    def test_invalid_credential_does_not_list_repositories(self):
+        from checker import credential_probe
+        with patch.object(credential_probe,'request',return_value=('github_http_401',None)) as remote:
+            result=credential_probe.inspect({'token':'PRIVATE_TEST_VALUE'})
+        self.assertEqual(remote.call_count,1)
+        self.assertEqual(result['credential_checks']['identity'],'github_http_401')

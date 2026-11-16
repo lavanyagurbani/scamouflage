@@ -9,12 +9,16 @@ def render(project=None):
     st.caption('Automatic page retrieval is disabled for SSRF safety. No submitted website is contacted. Manual text is not verified against the URL.')
     from checker.private_assets import ensure, AssetError, configuration
     from checker.diagnostics import BUILD, inspect
-    st.caption('Checker build: ' + BUILD)
+    st.caption('Checker build: ' + BUILD + ' | credential probe v1')
     with st.expander('Private checker diagnostics'):
         if st.button('Verify private checker setup'):
             st.session_state.pop('job_scan', None)
             with st.spinner('Checking private repository access and pinned assets...'):
-                st.session_state['checker_diagnostics'] = inspect()
+                report = inspect()
+                if report.get('result') == 'repository_not_accessible':
+                    from checker.credential_probe import inspect as inspect_credential
+                    report.update(inspect_credential(configuration()))
+                st.session_state['checker_diagnostics'] = report
         if 'checker_diagnostics' in st.session_state:
             st.json(st.session_state['checker_diagnostics'])
     if configuration():
