@@ -104,6 +104,11 @@ class ReaderTests(unittest.TestCase):
             raise unittest.SkipTest('Existing BigQuery SDK unavailable; no packages installed')
         cls.bigquery = bigquery
 
+    def setUp(self):
+        auth = patch('dashboard.bigquery_reader.get_credentials', return_value=None)
+        auth.start()
+        self.addCleanup(auth.stop)
+
     def test_read_configuration_and_parameters(self):
         with patch.object(self.bigquery, 'Client') as factory:
             client = factory.return_value.__enter__.return_value

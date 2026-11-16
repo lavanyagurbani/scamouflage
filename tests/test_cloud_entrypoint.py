@@ -49,7 +49,7 @@ class CloudEntrypointTests(unittest.TestCase):
             return requirements
         cloud = read(ROOT / 'dashboard/requirements.txt')
         self.assertTrue({'streamlit', 'pandas', 'google-cloud-bigquery', 'scikit-learn',
-                         'joblib', 'tldextract', 'jinja2'} <= cloud)
+                         'joblib', 'tldextract', 'jinja2', 'google-auth'} <= cloud)
         self.assertEqual(read(ROOT / 'checker/requirements.txt'), cloud)
 
 

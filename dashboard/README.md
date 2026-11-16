@@ -173,9 +173,11 @@ The entrypoint adds its resolved repository root to Python's module search path
 before importing `dashboard` and `checker`; it does not depend on the current
 working directory or a deployment-specific `PYTHONPATH`.
 
-Never commit credentials or service-account keys. Existing BigQuery authentication
-and project configuration are still required for analytics; this import fix does
-not grant cloud resource access. Model binaries and the historical lookup index
+Never commit credentials or service-account keys. BigQuery supports
+`[gcp_service_account]` in secure Streamlit Secrets, with local ADC fallback.
+The project ID is read from root Streamlit Secrets first, then the environment.
+Follow [exact configuration and least-privilege IAM instructions](../docs/streamlit-cloud-bigquery.md).
+Authentication configuration does not grant cloud resource access. Model binaries and the historical lookup index
 remain excluded from Git: the checker reports unavailable until local artifacts
 are supplied through an approved deployment process. Automatic scraping is disabled.
 

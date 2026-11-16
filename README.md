@@ -146,6 +146,8 @@ $env:GCP_PROJECT_ID = "scamouflage"
 
 The project requires access to the appropriate BigQuery datasets and tables. Cloning the repository does not automatically provide access to the existing cloud resources.
 
+On Streamlit Community Cloud, configure the project and service account through secure app Secrets. See [Cloud BigQuery setup and least-privilege permissions](docs/streamlit-cloud-bigquery.md). Local ADC remains supported.
+
 ### Step 3: Set Up Dependencies and Local Checker Artifacts
 
 Use Python 3.10 or newer in a separate environment. From the repository root:

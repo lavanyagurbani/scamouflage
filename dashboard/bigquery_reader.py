@@ -1,14 +1,7 @@
 """Read-only execution boundary. No Streamlit, pandas or cloud activity on import."""
 from dashboard.queries import LOCATION, MAX_BYTES, MAX_ROWS, PROJECT, build_query
 
-
-class DashboardError(Exception):
-    """Sanitized user-facing error; never includes source values or raw API payloads."""
-
-
-def validate_project(project):
-    if project != PROJECT:
-        raise DashboardError('Set GCP_PROJECT_ID=scamouflage. Other projects are not supported.')
+from dashboard.auth import DashboardError, get_credentials, validate_project
 
 
 def read_query(spec, project):
@@ -22,8 +15,12 @@ def read_query(spec, project):
     except ImportError:
         raise DashboardError('A dashboard dependency is missing. Install dashboard/requirements.txt in your selected environment.') from None
     try:
-        # Existing ADC only. A short-lived client avoids caching credential objects.
-        with bigquery.Client(project=PROJECT, location=LOCATION) as client:
+        # Credentials stay outside cached query arguments/results and session state.
+        credentials = get_credentials()
+        options = {'project': PROJECT, 'location': LOCATION}
+        if credentials is not None:
+            options['credentials'] = credentials
+        with bigquery.Client(**options) as client:
             config = bigquery.QueryJobConfig(
                 use_legacy_sql=False, maximum_bytes_billed=MAX_BYTES,
                 use_query_cache=True, job_timeout_ms=60000,
@@ -39,7 +36,7 @@ def read_query(spec, project):
                 raise DashboardError('The overview view must contain exactly one row. Check the existing dbt views.')
             return rows
     except (DefaultCredentialsError, RefreshError):
-        raise DashboardError('ADC is missing or expired. Restore the working project ADC; no service-account key is needed.') from None
+        raise DashboardError('Google Cloud authentication is missing, expired or rejected. Configure gcp_service_account in Cloud Secrets, or restore local ADC.') from None
     except Forbidden:
         raise DashboardError('Access or Sandbox quota denied. Check analytics-view read/job permissions and quota; do not enable billing.') from None
     except NotFound:

@@ -1,6 +1,5 @@
 """Run from the repository root: python -m streamlit run dashboard/app.py"""
 from datetime import datetime, timedelta, timezone
-import os
 from pathlib import Path
 import sys
 
@@ -13,9 +12,10 @@ if _PROJECT_ROOT not in sys.path:
 import pandas as pd
 import streamlit as st
 
-from dashboard.bigquery_reader import DashboardError, read_query, validate_project
+from dashboard.bigquery_reader import DashboardError, read_query
 from dashboard.queries import DIMENSIONS, PROJECT, QuerySpec, SUPPORTED_QUESTIONS, match_question
 from dashboard.check_job import render as check_job
+from dashboard.auth import resolve_project
 from dashboard.presentation import (PAGES, PAGE_DESCRIPTIONS, THEME_KEY, chart_spec,
                                     selected_theme, stylesheet, tokens)
 
@@ -270,7 +270,7 @@ def main():
         st.markdown('**BigQuery Sandbox**')
         st.caption('Historical snapshots · Read-only analytics')
         st.text('scamouflage · US\nscamouflage_analytics')
-        st.caption('ADC authentication\n100 MiB cap per query · 10-minute cache')
+        st.caption('Cloud Secrets or local ADC\n100 MiB cap per query · 10-minute cache')
         if st.button('Refresh cached analytics', use_container_width=True):
             cached_read.clear()
         st.caption('Clears cached data for the next read. Prior chat answers retain their original timestamps.')
@@ -284,10 +284,10 @@ def main():
         st.radio('Theme', ['Light', 'Dark'], key=THEME_KEY, horizontal=True, label_visibility='collapsed')
     st.markdown(stylesheet(selected_theme(st.session_state)), unsafe_allow_html=True)
     st.divider()
-    project = os.environ.get('GCP_PROJECT_ID', '')
+    project = None
     try:
         if page != 'Check Job Link':
-            validate_project(project)
+            project = resolve_project()
         {'Check Job Link': check_job, 'Overview': overview, 'Job Fraud Analytics': jobs, 'Phishing Intelligence': phishing,
          'Ask Scamouflage': conversation, 'Pipeline Status': pipeline_status}[page](project)
     except DashboardError as exc:
